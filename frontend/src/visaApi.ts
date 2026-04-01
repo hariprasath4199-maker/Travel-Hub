@@ -1,3 +1,5 @@
+import { isBackendAvailable, DEMO_VISA_REQUESTS, DEMO_USERS } from './demoData';
+
 const API = '/api';
 
 export type VisaRequestStatus =
@@ -33,8 +35,18 @@ export interface VisaRequest {
 
 async function json<T>(res: Response): Promise<T> { if (!res.ok) throw new Error(await res.text()); return res.json(); }
 
-export const fetchVisaRequests = (): Promise<VisaRequest[]> => fetch(`${API}/visa-requests`).then(r => json(r));
-export const fetchVisaRequest = (id: string): Promise<VisaRequest> => fetch(`${API}/visa-requests/${id}`).then(r => json(r));
+export const fetchVisaRequests = async (): Promise<VisaRequest[]> => {
+  if (!(await isBackendAvailable())) return DEMO_VISA_REQUESTS;
+  return fetch(`${API}/visa-requests`).then(r => json(r));
+};
+export const fetchVisaRequest = async (id: string): Promise<VisaRequest> => {
+  if (!(await isBackendAvailable())) {
+    const found = DEMO_VISA_REQUESTS.find(r => r.id === id);
+    if (found) return found;
+    throw new Error('Not found');
+  }
+  return fetch(`${API}/visa-requests/${id}`).then(r => json(r));
+};
 
 export const createVisaRequest = (data: any): Promise<VisaRequest> =>
   fetch(`${API}/visa-requests`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(r => json(r));
@@ -72,9 +84,18 @@ export const confirmBooking = (id: string, confirmedDate: VendorDateSlot, perfor
 export const confirmAppointment = (id: string, vendorConfirmationReference: string, performedBy: string, role: UserRole): Promise<VisaRequest> =>
   fetch(`${API}/visa-requests/${id}/appointment-confirmed`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ vendorConfirmationReference, performedBy, role }) }).then(r => json(r));
 
-export const fetchUsers = (): Promise<AppUser[]> => fetch(`${API}/users`).then(r => json(r));
-export const fetchUsersByRole = (role: UserRole): Promise<AppUser[]> => fetch(`${API}/users/by-role/${role}`).then(r => json(r));
-export const fetchEmailLog = (requestId: string): Promise<any[]> => fetch(`${API}/email-log/${requestId}`).then(r => json(r));
+export const fetchUsers = async (): Promise<AppUser[]> => {
+  if (!(await isBackendAvailable())) return DEMO_USERS;
+  return fetch(`${API}/users`).then(r => json(r));
+};
+export const fetchUsersByRole = async (role: UserRole): Promise<AppUser[]> => {
+  if (!(await isBackendAvailable())) return DEMO_USERS.filter(u => u.role === role);
+  return fetch(`${API}/users/by-role/${role}`).then(r => json(r));
+};
+export const fetchEmailLog = async (requestId: string): Promise<any[]> => {
+  if (!(await isBackendAvailable())) return [];
+  return fetch(`${API}/email-log/${requestId}`).then(r => json(r));
+};
 
 export const uploadFile = async (file: File): Promise<{ filename: string; originalName: string; size: number }> => {
   const form = new FormData();

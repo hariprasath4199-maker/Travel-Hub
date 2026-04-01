@@ -1,10 +1,12 @@
 import { TravelRequest, Traveler } from './types';
+import { isBackendAvailable, DEMO_REQUESTS, DEMO_STATS } from './demoData';
 
 const API_BASE = '/api';
 
 // ==================== REQUESTS ====================
 
 export async function fetchRequests(): Promise<TravelRequest[]> {
+  if (!(await isBackendAvailable())) return DEMO_REQUESTS;
   const res = await fetch(`${API_BASE}/requests`);
   if (!res.ok) throw new Error('Failed to fetch requests');
   return res.json();
@@ -54,6 +56,7 @@ export async function deleteRequest(id: string): Promise<void> {
 // ==================== TRAVELERS ====================
 
 export async function fetchTravelers(): Promise<Traveler[]> {
+  if (!(await isBackendAvailable())) return [];
   const res = await fetch(`${API_BASE}/travelers`);
   if (!res.ok) throw new Error('Failed to fetch travelers');
   return res.json();
@@ -80,6 +83,7 @@ export interface DashboardStats {
 }
 
 export async function fetchStats(): Promise<DashboardStats> {
+  if (!(await isBackendAvailable())) return DEMO_STATS;
   const res = await fetch(`${API_BASE}/stats`);
   if (!res.ok) throw new Error('Failed to fetch stats');
   return res.json();
