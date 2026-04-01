@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-export default defineConfig({
-  base: '/Travel-Hub/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/Travel-Hub/' : '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -19,4 +19,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
