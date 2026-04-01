@@ -11,9 +11,11 @@ import VisaRequestDetail from './pages/VisaRequestDetail';
 import ActionPage from './pages/ActionPage';
 import RoleSwitcher from './pages/RoleSwitcher';
 
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
