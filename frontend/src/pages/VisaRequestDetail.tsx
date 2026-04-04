@@ -13,7 +13,7 @@ import {
   type VisaRequest, type VendorDateSlot, type CostProposal, type UserRole,
 } from '@/src/visaApi';
 import { StatusBadge } from '@/src/components/StatusBadge';
-import { WorkflowProgressTracker } from '@/src/components/WorkflowProgressTracker';
+import { RunwayProgressTracker } from '@/src/components/RunwayProgressTracker';
 import { WorkflowTimeline } from '@/src/components/WorkflowTimeline';
 import { useUserRole } from '@/src/context/UserRoleContext';
 
@@ -489,10 +489,8 @@ export default function VisaRequestDetail() {
         </div>
       </div>
 
-      {/* Progress Tracker */}
-      <div className="bg-surface-container-lowest rounded-2xl shadow-sm p-4">
-        <WorkflowProgressTracker status={request.status} currentStep={request.currentStep} />
-      </div>
+      {/* Progress Tracker — Airport Runway */}
+      <RunwayProgressTracker status={request.status} currentStep={request.currentStep} />
 
       {/* Request Details Card */}
       <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm">
