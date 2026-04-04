@@ -1,9 +1,10 @@
 import { cn } from '@/src/lib/utils';
 import { RequestStatus } from '@/src/types';
 import { type VisaRequestStatus } from '@/src/visaApi';
+import { type TicketBookingStatus } from '@/src/ticketApi';
 
 interface StatusBadgeProps {
-  status: RequestStatus | VisaRequestStatus | 'Compliant' | 'Pending Update';
+  status: RequestStatus | VisaRequestStatus | TicketBookingStatus | 'Compliant' | 'Pending Update';
   className?: string;
 }
 
@@ -30,6 +31,16 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     EVP_REJECTED: 'bg-red-100 text-red-800',
     DATE_BLOCKING_REQUESTED: 'bg-sky-100 text-sky-800',
     APPOINTMENT_CONFIRMED: 'bg-green-100 text-green-800',
+    // Ticket booking statuses
+    TICKET_REQUESTED: 'bg-blue-100 text-blue-800',
+    ITINERARY_REQUESTED: 'bg-indigo-100 text-indigo-800',
+    ITINERARY_PROVIDED: 'bg-violet-100 text-violet-800',
+    ITINERARY_SHARED: 'bg-purple-100 text-purple-800',
+    EVP_APPROVAL_PENDING: 'bg-amber-100 text-amber-800',
+    BOOKING_REQUESTED: 'bg-orange-100 text-orange-800',
+    TICKET_BOOKED: 'bg-teal-100 text-teal-800',
+    TICKET_SHARED: 'bg-green-100 text-green-800',
+    COMPLETED: 'bg-green-100 text-green-800',
   };
 
   const labels: Record<string, string> = {
@@ -39,6 +50,9 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     AWAITING_APPLICANT_DATE_SELECTION: 'Await Selection', APPLICANT_DATES_SUBMITTED: 'Dates Selected',
     PENDING_EVP_APPROVAL: 'Pending EVP', EVP_APPROVED: 'EVP OK', EVP_REJECTED: 'EVP Rejected',
     DATE_BLOCKING_REQUESTED: 'Blocking', APPOINTMENT_CONFIRMED: 'Confirmed',
+    TICKET_REQUESTED: 'Requested', ITINERARY_REQUESTED: 'Itinerary Req', ITINERARY_PROVIDED: 'Itinerary In',
+    ITINERARY_SHARED: 'Shared', BOOKING_REQUESTED: 'Booking Req', TICKET_BOOKED: 'Booked',
+    TICKET_SHARED: 'Shared', COMPLETED: 'Complete',
   };
 
   return (

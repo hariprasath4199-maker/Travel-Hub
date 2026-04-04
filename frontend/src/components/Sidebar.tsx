@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, Database, Users, BarChart3, Settings, Plus, PlaneTakeoff, FileCheck
+  LayoutDashboard, Database, Users, BarChart3, Settings, Plus, PlaneTakeoff, FileCheck, Plane
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
@@ -8,6 +8,7 @@ export function Sidebar() {
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', to: '/' },
     { icon: FileCheck, label: 'Visa Workflow', to: '/visa-requests' },
+    { icon: Plane, label: 'Ticket Booking', to: '/ticket-bookings' },
     { icon: Database, label: 'Requests', to: '/requests' },
     { icon: Users, label: 'Travelers', to: '/travelers' },
     { icon: BarChart3, label: 'Reports', to: '/reports' },

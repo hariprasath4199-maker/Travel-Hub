@@ -8,6 +8,9 @@ import NewRequest from './pages/NewRequest';
 import VisaWorkflow from './pages/VisaWorkflow';
 import NewVisaRequest from './pages/NewVisaRequest';
 import VisaRequestDetail from './pages/VisaRequestDetail';
+import TicketBookings from './pages/TicketBookings';
+import NewTicketBooking from './pages/NewTicketBooking';
+import TicketBookingDetail from './pages/TicketBookingDetail';
 import ActionPage from './pages/ActionPage';
 import RoleSwitcher from './pages/RoleSwitcher';
 
@@ -22,6 +25,9 @@ export default function App() {
           <Route path="visa-requests" element={<VisaWorkflow />} />
           <Route path="visa-requests/new" element={<NewVisaRequest />} />
           <Route path="visa-requests/:id" element={<VisaRequestDetail />} />
+          <Route path="ticket-bookings" element={<TicketBookings />} />
+          <Route path="ticket-bookings/new" element={<NewTicketBooking />} />
+          <Route path="ticket-bookings/:id" element={<TicketBookingDetail />} />
           <Route path="action/:token" element={<ActionPage />} />
           <Route path="requests" element={<Requests />} />
           <Route path="requests/new" element={<NewRequest />} />
