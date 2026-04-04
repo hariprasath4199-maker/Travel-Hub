@@ -1,5 +1,6 @@
 import { isBackendAvailable } from './demoData';
 import { type VisaRequestStatus, type UserRole } from './visaApi';
+export type { UserRole };
 
 const API = '/api';
 
