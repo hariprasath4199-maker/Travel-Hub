@@ -107,7 +107,7 @@ export default function VisaWorkflow() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">Visa Workflow</h1>
+          <h1 className="text-2xl font-bold text-on-surface">Visa Bookings</h1>
           <p className="text-sm text-on-surface-variant mt-1">
             {requests.length} request{requests.length !== 1 ? 's' : ''} visible to you
           </p>

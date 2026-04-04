@@ -205,8 +205,8 @@ function HeroBanner({ stats, roleLabel }: { stats: DashboardStats | null; roleLa
               <Plane size={18} className="text-sky-400" style={{ transform: 'rotate(-45deg)' }} />
             </div>
             <div>
-              <div className="text-[9px] font-mono text-sky-400/60 tracking-[0.3em] uppercase">Zalaris Travel Hub</div>
-              <div className="text-white text-lg font-bold tracking-wide">Flight Operations Center</div>
+              <div className="text-[9px] font-mono text-sky-400/60 tracking-[0.3em] uppercase">Zalaris Travel Operations</div>
+              <div className="text-white text-lg font-bold tracking-wide">Zalaris Travel Hub</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -387,7 +387,7 @@ function SidebarPanel({ stats }: { stats: DashboardStats | null }) {
       <div className="rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(180deg, #0a1628, #0f1f3d)', border: '1px solid rgba(255,255,255,0.04)' }}>
         <div className="px-4 py-3 flex items-center gap-2" style={{ background: 'rgba(0,0,0,0.2)' }}>
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 4px rgba(16,185,129,0.5)' }} />
-          <span className="text-[10px] font-mono text-emerald-400/70 tracking-[0.15em] uppercase font-bold">Flight Radar</span>
+          <span className="text-[10px] font-mono text-emerald-400/70 tracking-[0.15em] uppercase font-bold">status Radar</span>
         </div>
 
         <div className="p-4 space-y-4">
@@ -442,7 +442,7 @@ function SidebarPanel({ stats }: { stats: DashboardStats | null }) {
         </div>
         <div className="p-3 space-y-2">
           {[
-            { to: '/visa-requests', icon: Shield, label: 'Visa Workflow', desc: 'Process visa applications', color: '#8b5cf6' },
+            { to: '/visa-requests', icon: Shield, label: 'Visa Bookings', desc: 'Process visa applications', color: '#8b5cf6' },
             { to: '/ticket-bookings', icon: Ticket, label: 'Ticket Booking', desc: 'Manage flight bookings', color: '#0ea5e9' },
             { to: '/requests/new', icon: Plane, label: 'New Request', desc: 'Submit travel authorization', color: '#10b981' },
             { to: '/travelers', icon: Users, label: 'Travelers', desc: 'Manage profiles', color: '#f59e0b' },

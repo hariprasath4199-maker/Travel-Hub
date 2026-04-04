@@ -23,7 +23,7 @@ export function Sidebar() {
         </div>
         <div>
           <h1 className="text-xl font-bold tracking-tight text-slate-900 font-headline">Zalaris Travel</h1>
-          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise Portal</p>
+          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Hub</p>
         </div>
       </div>
 

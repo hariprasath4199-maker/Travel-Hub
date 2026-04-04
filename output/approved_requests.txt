@@ -1,0 +1,16 @@
+[
+  {
+    "id": "REQ-5001",
+    "employeeName": "Gopinath",
+    "role": "Manager",
+    "destination": "Riga,Latvia",
+    "dates": "Apr 15 - May 30",
+    "nights": "45 nights",
+    "purpose": "Meeting",
+    "cost": "$4,200.00",
+    "department": "Operations",
+    "status": "APPROVED",
+    "avatar": "https://ui-avatars.com/api/?name=Gopinath&background=255dad&color=fff&size=128",
+    "approvedAt": "2026-04-01T18:30:51.523Z"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "action": "REQUEST_CREATED",
+    "requestId": "REQ-5001",
+    "timestamp": "2026-04-01T18:30:11.807Z",
+    "details": "New request by Gopinath to Riga,Latvia"
+  },
+  {
+    "action": "REQUEST_APPROVED",
+    "requestId": "REQ-5001",
+    "timestamp": "2026-04-01T18:30:51.524Z",
+    "details": "Request REQ-5001 marked as APPROVED"
+  }
+]

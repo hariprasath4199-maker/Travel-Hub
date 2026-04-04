@@ -1,0 +1,5 @@
+{
+  "name": "Travel Management",
+  "description": "Enterprise travel management portal for monitoring authorizations, traveler profiles, and spend trends.",
+  "requestFramePermissions": []
+}
