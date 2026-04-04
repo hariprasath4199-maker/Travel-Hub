@@ -11,7 +11,7 @@ export type VisaRequestStatus =
 
 export type UserRole = 'MANAGER' | 'HR_ADMIN' | 'COST_CENTRE_OWNER' | 'VENDOR' | 'APPLICANT' | 'EVP';
 
-export interface AppUser { id: string; name: string; email: string; role: UserRole; avatar?: string; }
+export interface AppUser { id: string; name: string; email: string; role: UserRole; avatar?: string; costCentre?: string; }
 export interface VendorDateSlot { date: string; time: string; location: string; slotId: string; }
 export interface CostProposal { visaFees: number; serviceFees: number; travelCost: number; accommodationCost: number; otherCosts: number; totalCost: number; currency: string; notes?: string; }
 export interface WorkflowEvent { id: string; step: number; action: string; fromStatus: VisaRequestStatus | null; toStatus: VisaRequestStatus; performedBy: string; performedByRole: UserRole; timestamp: string; comments?: string; }
@@ -35,21 +35,70 @@ export interface VisaRequest {
 
 async function json<T>(res: Response): Promise<T> { if (!res.ok) throw new Error(await res.text()); return res.json(); }
 
+/** In demo mode, merge hardcoded demo data with any requests persisted in localStorage */
+const getDemoVisaRequests = (): VisaRequest[] => {
+  try {
+    const stored = localStorage.getItem('zalaris_visa_requests');
+    if (stored) return JSON.parse(stored) as VisaRequest[];
+  } catch { /* ignore parse errors */ }
+  return [...DEMO_VISA_REQUESTS];
+};
+
 export const fetchVisaRequests = async (): Promise<VisaRequest[]> => {
-  if (!(await isBackendAvailable())) return DEMO_VISA_REQUESTS;
+  if (!(await isBackendAvailable())) return getDemoVisaRequests();
   return fetch(`${API}/visa-requests`).then(r => json(r));
 };
 export const fetchVisaRequest = async (id: string): Promise<VisaRequest> => {
   if (!(await isBackendAvailable())) {
-    const found = DEMO_VISA_REQUESTS.find(r => r.id === id);
+    const found = getDemoVisaRequests().find(r => r.id === id);
     if (found) return found;
     throw new Error('Not found');
   }
   return fetch(`${API}/visa-requests/${id}`).then(r => json(r));
 };
 
-export const createVisaRequest = (data: any): Promise<VisaRequest> =>
-  fetch(`${API}/visa-requests`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(r => json(r));
+export const createVisaRequest = async (data: any): Promise<VisaRequest> => {
+  if (!(await isBackendAvailable())) {
+    const now = new Date().toISOString();
+    const stored = localStorage.getItem('zalaris_visa_requests');
+    const existing: VisaRequest[] = stored ? JSON.parse(stored) : [...DEMO_VISA_REQUESTS];
+    const nextNum = existing.length > 0 ? Math.max(...existing.map(r => parseInt(r.id.replace('VISA-', '').replace('DEMO-', '')) || 0)) + 1 : 100;
+    const newRequest: VisaRequest = {
+      id: `VISA-${nextNum}`,
+      currentStep: 1,
+      status: 'SUBMITTED_TO_HR',
+      createdAt: now,
+      updatedAt: now,
+      employeeName: data.employeeName || '',
+      employeeRole: data.employeeRole || '',
+      employeeAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.employeeName || 'U')}`,
+      applicantEmail: data.applicantEmail || '',
+      managerName: data.managerName || '',
+      managerEmail: data.managerEmail || '',
+      destination: data.destination || '',
+      travelLocation: data.travelLocation || '',
+      numberOfDays: data.numberOfDays || 0,
+      costCentre: data.costCentre || '',
+      managerComments: data.managerComments || '',
+      recommendationLetterFile: data.recommendationLetterFile,
+      workflowHistory: [{
+        id: `evt-${Date.now()}`,
+        step: 1,
+        action: 'Request submitted to HR Admin',
+        fromStatus: null,
+        toStatus: 'SUBMITTED_TO_HR',
+        performedBy: data.managerName || 'System',
+        performedByRole: 'MANAGER',
+        timestamp: now,
+        comments: data.managerComments,
+      }],
+    };
+    existing.push(newRequest);
+    localStorage.setItem('zalaris_visa_requests', JSON.stringify(existing));
+    return newRequest;
+  }
+  return fetch(`${API}/visa-requests`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(r => json(r));
+};
 
 export const submitCostProposal = (id: string, costProposal: any, performedBy: string): Promise<VisaRequest> =>
   fetch(`${API}/visa-requests/${id}/cost-proposal`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ costProposal, performedBy }) }).then(r => json(r));
@@ -98,13 +147,19 @@ export const fetchEmailLog = async (requestId: string): Promise<any[]> => {
 };
 
 export const uploadFile = async (file: File): Promise<{ filename: string; originalName: string; size: number }> => {
+  if (!(await isBackendAvailable())) {
+    return {
+      filename: `demo-${Date.now()}-${file.name}`,
+      originalName: file.name,
+      size: file.size,
+    };
+  }
   const form = new FormData();
   form.append('file', file);
   const res = await fetch(`${API}/upload`, { method: 'POST', body: form });
   return json(res);
 };
 
-// Step labels & colors
 export const STEP_LABELS: Record<number, string> = { 1: 'Submit to HR', 2: 'Cost Proposal', 3: 'Cost Centre Approval', 4: 'Vendor Request', 5: 'Vendor Dates', 6: 'Share Dates', 7: 'Applicant Selection', 8: 'EVP Approval', 9: 'Booking Confirmed' };
 
 export const STATUS_LABELS: Record<VisaRequestStatus, string> = {
