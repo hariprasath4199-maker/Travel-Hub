@@ -166,8 +166,8 @@ export default function TicketBookingDetail() {
         <StatusBadge status={booking.status} />
       </div>
 
-      {/* Progress Tracker — Airport Boarding Experience */}
-      <BoardingPassTracker currentStep={booking.currentStep} status={booking.status} />
+      {/* Progress Tracker — Flight Ticket Style */}
+      <BoardingPassTracker currentStep={booking.currentStep} status={booking.status} booking={booking} />
 
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">

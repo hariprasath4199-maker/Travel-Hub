@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Filter,
   Share2,
@@ -14,20 +14,30 @@ import { fetchRequests, updateRequestStatus } from '@/src/api';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { Link } from 'react-router-dom';
 import { TravelRequest } from '@/src/types';
+import { useUserRole } from '@/src/context/UserRoleContext';
+import { ROLE_LABELS } from '@/src/visaApi';
+import { filterTravelRequests, ROLE_VIEW_INFO } from '@/src/utils/roleFilter';
 
 export default function Requests() {
-  const [requests, setRequests] = useState<TravelRequest[]>([]);
+  const { currentUser } = useUserRole();
+  const [allRequests, setAllRequests] = useState<TravelRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadRequests = () => {
     setLoading(true);
     fetchRequests()
-      .then(setRequests)
+      .then(setAllRequests)
       .catch(console.error)
       .finally(() => setLoading(false));
   };
 
   useEffect(() => { loadRequests(); }, []);
+
+  /* ── Role-based filtering ── */
+  const requests = useMemo(
+    () => filterTravelRequests(allRequests, currentUser),
+    [allRequests, currentUser]
+  );
 
   const handleStatusChange = async (id: string, status: 'APPROVED' | 'DENIED') => {
     try {
@@ -51,10 +61,30 @@ export default function Requests() {
 
   return (
     <div className="p-10 space-y-8 max-w-[1400px] mx-auto">
+      {/* Role-based access banner */}
+      {currentUser && (
+        <div className="rounded-xl px-5 py-3 flex items-center gap-4"
+             style={{
+               background: `${ROLE_VIEW_INFO[currentUser.role].color}08`,
+               border: `1px solid ${ROLE_VIEW_INFO[currentUser.role].color}20`,
+             }}>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-slate-800">{ROLE_VIEW_INFO[currentUser.role].label}</span>
+              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-bold"
+                    style={{ background: `${ROLE_VIEW_INFO[currentUser.role].color}15`, color: ROLE_VIEW_INFO[currentUser.role].color }}>
+                {ROLE_LABELS[currentUser.role]}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">{ROLE_VIEW_INFO[currentUser.role].desc}</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-12 gap-6 items-end">
         <div className="col-span-12 lg:col-span-8">
           <h2 className="text-4xl font-extrabold tracking-tight font-headline text-on-surface mb-2">Request Queue</h2>
-          <p className="text-on-surface-variant font-body">Manage and monitor enterprise-wide travel authorizations.</p>
+          <p className="text-on-surface-variant font-body">{requests.length} request{requests.length !== 1 ? 's' : ''} visible to you</p>
         </div>
         <div className="col-span-12 lg:col-span-4 flex justify-end space-x-4">
           <div className="bg-surface-container-lowest p-4 rounded-xl flex items-center space-x-4 shadow-sm">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Filter, FileDown, BadgeCheck, History, ChevronRight, UserPlus,
   FileText, CreditCard, Star, Car, AlertCircle, PlaneTakeoff, Loader2
@@ -6,14 +6,24 @@ import {
 import { fetchTravelers } from '@/src/api';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { Traveler } from '@/src/types';
+import { useUserRole } from '@/src/context/UserRoleContext';
+import { ROLE_LABELS } from '@/src/visaApi';
+import { filterTravelers, ROLE_VIEW_INFO } from '@/src/utils/roleFilter';
 
 export default function Travelers() {
-  const [travelers, setTravelers] = useState<Traveler[]>([]);
+  const { currentUser } = useUserRole();
+  const [allTravelers, setAllTravelers] = useState<Traveler[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTravelers().then(setTravelers).catch(console.error).finally(() => setLoading(false));
+    fetchTravelers().then(setAllTravelers).catch(console.error).finally(() => setLoading(false));
   }, []);
+
+  /* ── Role-based filtering ── */
+  const travelers = useMemo(
+    () => filterTravelers(allTravelers, currentUser),
+    [allTravelers, currentUser]
+  );
 
   if (loading) {
     return <div className="p-10 flex items-center justify-center min-h-[60vh]"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
@@ -24,10 +34,30 @@ export default function Travelers() {
 
   return (
     <div className="p-10 space-y-8 max-w-[1400px] mx-auto">
+      {/* Role-based access banner */}
+      {currentUser && (
+        <div className="rounded-xl px-5 py-3 flex items-center gap-4"
+             style={{
+               background: `${ROLE_VIEW_INFO[currentUser.role].color}08`,
+               border: `1px solid ${ROLE_VIEW_INFO[currentUser.role].color}20`,
+             }}>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-slate-800">{ROLE_VIEW_INFO[currentUser.role].label}</span>
+              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-bold"
+                    style={{ background: `${ROLE_VIEW_INFO[currentUser.role].color}15`, color: ROLE_VIEW_INFO[currentUser.role].color }}>
+                {ROLE_LABELS[currentUser.role]}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">{ROLE_VIEW_INFO[currentUser.role].desc}</p>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-end mb-10">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mb-1">Traveler Profiles</h2>
-          <p className="text-on-surface-variant font-medium">Directory of {travelers.length} managed employee{travelers.length !== 1 ? 's' : ''}</p>
+          <p className="text-on-surface-variant font-medium">{travelers.length} traveler{travelers.length !== 1 ? 's' : ''} visible to you</p>
         </div>
         <div className="flex gap-3">
           <button className="px-4 py-2 bg-surface-container-high text-on-secondary-container rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-surface-container transition-colors"><Filter size={16} />Filters</button>

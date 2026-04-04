@@ -46,9 +46,9 @@ export const DEMO_STATS: DashboardStats = {
 };
 
 export const DEMO_USERS: AppUser[] = [
-  { id: 'u1', name: 'Gopinath Subramani', email: 'gopinath@zalaris.com', role: 'MANAGER' },
+  { id: 'u1', name: 'Gopinath Subramani', email: 'gopinath@zalaris.com', role: 'MANAGER', costCentre: 'CC-DEV-001' },
   { id: 'u2', name: 'Hari Kumar', email: 'hari.kumar@zalaris.com', role: 'HR_ADMIN' },
-  { id: 'u3', name: 'Anna Fischer', email: 'anna.fischer@zalaris.com', role: 'COST_CENTRE_OWNER' },
+  { id: 'u3', name: 'Anna Fischer', email: 'anna.fischer@zalaris.com', role: 'COST_CENTRE_OWNER', costCentre: 'CC-FIN-001' },
   { id: 'u4', name: 'VFS Global', email: 'appointments@vfsglobal.com', role: 'VENDOR' },
   { id: 'u5', name: 'Ravi Shankar', email: 'ravi.shankar@zalaris.com', role: 'APPLICANT' },
   { id: 'u6', name: 'Marcus Weber', email: 'marcus.weber@zalaris.com', role: 'EVP' },

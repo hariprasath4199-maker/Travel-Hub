@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader2, ArrowRight, Plus, FileText, Search, Filter } from 'lucide-react';
-import { fetchVisaRequests, STEP_LABELS, STATUS_LABELS, type VisaRequest, type VisaRequestStatus } from '@/src/visaApi';
+import { fetchVisaRequests, STEP_LABELS, STATUS_LABELS, ROLE_LABELS, type VisaRequest, type VisaRequestStatus } from '@/src/visaApi';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { useUserRole } from '@/src/context/UserRoleContext';
+import { filterVisaRequestsByRole, ROLE_VIEW_INFO } from '@/src/utils/roleFilter';
 
 type FilterTab = 'all' | 'active' | 'confirmed' | 'rejected';
 
 export default function VisaWorkflow() {
   const { currentUser } = useUserRole();
-  const [requests, setRequests] = useState<VisaRequest[]>([]);
+  const [allRequests, setAllRequests] = useState<VisaRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -17,10 +18,16 @@ export default function VisaWorkflow() {
 
   useEffect(() => {
     fetchVisaRequests()
-      .then(setRequests)
+      .then(setAllRequests)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  /* ── Role-based filtering ── */
+  const requests = useMemo(
+    () => filterVisaRequestsByRole(allRequests, currentUser),
+    [allRequests, currentUser]
+  );
 
   const isRejected = (s: VisaRequestStatus) => s.includes('REJECTED');
   const isConfirmed = (s: VisaRequestStatus) => s === 'APPOINTMENT_CONFIRMED';
@@ -77,13 +84,32 @@ export default function VisaWorkflow() {
 
   return (
     <div className="p-10 space-y-6 max-w-[1400px] mx-auto">
+      {/* Role-based access banner */}
+      {currentUser && (
+        <div className="rounded-xl px-5 py-3 flex items-center gap-4"
+             style={{
+               background: `${ROLE_VIEW_INFO[currentUser.role].color}08`,
+               border: `1px solid ${ROLE_VIEW_INFO[currentUser.role].color}20`,
+             }}>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-slate-800">{ROLE_VIEW_INFO[currentUser.role].label}</span>
+              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-bold"
+                    style={{ background: `${ROLE_VIEW_INFO[currentUser.role].color}15`, color: ROLE_VIEW_INFO[currentUser.role].color }}>
+                {ROLE_LABELS[currentUser.role]}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">{ROLE_VIEW_INFO[currentUser.role].desc}</p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-on-surface">Visa Workflow</h1>
           <p className="text-sm text-on-surface-variant mt-1">
-            {currentUser ? `Logged in as ${currentUser.name} (${currentUser.role})` : 'Loading user...'}
-            {' '}&bull; {requests.length} total request{requests.length !== 1 ? 's' : ''}
+            {requests.length} request{requests.length !== 1 ? 's' : ''} visible to you
           </p>
         </div>
         <Link

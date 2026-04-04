@@ -46,15 +46,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto space-y-2 px-2">
-        <NavLink
-          to="/visa-requests/new"
-          className="w-full py-3 px-4 bg-gradient-to-br from-primary to-primary-dim text-on-primary rounded-xl font-headline font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
-        >
-          <Plus size={18} />
-          <span>New Visa Request</span>
-        </NavLink>
-      </div>
+      <div className="mt-auto" />
     </aside>
   );
 }
