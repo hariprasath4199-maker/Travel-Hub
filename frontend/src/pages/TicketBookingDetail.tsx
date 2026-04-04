@@ -208,24 +208,16 @@ export default function TicketBookingDetail() {
             </div>
           </div>
 
-          {/* Step 1: Ticket Request */}
-          {booking.currentStep >= 1 && (role === 'APPLICANT' || role === 'MANAGER') && booking.currentStep === 1 && (
+          {/* Step 1: Ticket Request — Info only for Manager/Applicant */}
+          {booking.currentStep === 1 && (role === 'APPLICANT' || role === 'MANAGER') && booking.status === 'TICKET_REQUESTED' && (
             <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-on-surface mb-4">Step 1: Request Ticket</h2>
-              <p className="text-on-surface-variant text-sm mb-4">Request a ticket booking from HR Admin</p>
-              <button
-                onClick={handleRequestItinerary}
-                disabled={submitting || booking.status !== 'TICKET_REQUESTED'}
-                className="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-dim transition-all active:scale-95 disabled:opacity-70 flex items-center gap-2"
-              >
-                {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                Request Itinerary from HR
-              </button>
+              <h2 className="text-lg font-bold text-on-surface mb-4">Step 1: Ticket Requested</h2>
+              <p className="text-on-surface-variant text-sm">Your ticket request has been submitted. Waiting for HR Admin to request itinerary from the vendor.</p>
             </div>
           )}
 
           {/* Step 2: Request Itinerary */}
-          {booking.currentStep >= 2 && role === 'HR_ADMIN' && booking.status === 'TICKET_REQUESTED' && (
+          {booking.currentStep >= 1 && role === 'HR_ADMIN' && booking.status === 'TICKET_REQUESTED' && (
             <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6">
               <h2 className="text-lg font-bold text-on-surface mb-4">Step 2: Request Itinerary from Vendor</h2>
               <p className="text-on-surface-variant text-sm mb-4">Send itinerary request to the travel vendor</p>
@@ -241,7 +233,7 @@ export default function TicketBookingDetail() {
           )}
 
           {/* Step 3: Vendor Provides Itinerary */}
-          {booking.currentStep >= 3 && role === 'VENDOR' && booking.status === 'ITINERARY_REQUESTED' && (
+          {booking.currentStep >= 2 && role === 'VENDOR' && booking.status === 'ITINERARY_REQUESTED' && (
             <VendorItineraryPanel
               booking={booking}
               submitting={submitting}
