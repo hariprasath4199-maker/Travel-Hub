@@ -11,7 +11,7 @@ import {
   type TicketBooking, type UserRole, type ItineraryOption, type BookedTicket,
 } from '@/src/ticketApi';
 import { StatusBadge } from '@/src/components/StatusBadge';
-import { TicketProgressTracker } from '@/src/components/TicketProgressTracker';
+import { BoardingPassTracker } from '@/src/components/BoardingPassTracker';
 import { useUserRole } from '@/src/context/UserRoleContext';
 
 export default function TicketBookingDetail() {
@@ -166,8 +166,8 @@ export default function TicketBookingDetail() {
         <StatusBadge status={booking.status} />
       </div>
 
-      {/* Progress Tracker */}
-      <TicketProgressTracker currentStep={booking.currentStep} status={booking.status} />
+      {/* Progress Tracker — Airport Boarding Experience */}
+      <BoardingPassTracker currentStep={booking.currentStep} status={booking.status} />
 
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
