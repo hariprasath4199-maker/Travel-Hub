@@ -41,3 +41,16 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Mobile sidebar: hidden by default, shown when open */
+.sidebar-mobile-hidden {
+  transform: translateX(-100%);
+}
+.sidebar-mobile-visible {
+  transform: translateX(0);
+}
+@media (min-width: 768px) {
+  .sidebar-mobile-hidden {
+    transform: translateX(0);
+  }
+}

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Requests from './pages/Requests';
@@ -35,6 +35,7 @@ export default function App() {
           <Route path="travelers" element={<Travelers />} />
           <Route path="reports" element={<PlaceholderPage title="Reports" />} />
           <Route path="settings" element={<RoleSwitcher />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -46,6 +47,19 @@ function PlaceholderPage({ title }: { title: string }) {
     <div className="p-10">
       <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mb-4">{title}</h2>
       <p className="text-on-surface-variant">This page is under construction.</p>
+    </div>
+  );
+}
+
+function NotFoundPage() {
+  return (
+    <div className="p-10 flex flex-col items-center justify-center min-h-[60vh] text-center">
+      <div className="text-8xl font-black text-primary/20 mb-4">404</div>
+      <h2 className="text-2xl font-extrabold tracking-tight text-on-surface mb-2">Page Not Found</h2>
+      <p className="text-on-surface-variant mb-6">The page you're looking for doesn't exist or has been moved.</p>
+      <Link to="/" className="bg-primary text-on-primary rounded-xl font-bold px-6 py-3 shadow-lg shadow-primary/20 hover:bg-primary-dim transition-all active:scale-95">
+        Back to Dashboard
+      </Link>
     </div>
   );
 }

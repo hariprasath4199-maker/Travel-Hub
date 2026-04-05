@@ -2,6 +2,7 @@ export type RequestStatus = 'PENDING' | 'APPROVED' | 'DENIED';
 
 export interface TravelRequest {
   id: string;
+  employeeId?: string;
   employeeName: string;
   role: string;
   avatar: string;
@@ -12,6 +13,7 @@ export interface TravelRequest {
   cost: string;
   status: RequestStatus;
   department: string;
+  mobileNumber?: string;
 }
 
 export interface Traveler {

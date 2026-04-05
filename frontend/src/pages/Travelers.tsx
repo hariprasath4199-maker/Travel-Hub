@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
   Filter, FileDown, BadgeCheck, History, ChevronRight, UserPlus,
-  FileText, CreditCard, Star, Car, AlertCircle, PlaneTakeoff, Loader2
+  FileText, CreditCard, Star, Car, AlertCircle, PlaneTakeoff, Loader2, X
 } from 'lucide-react';
-import { fetchTravelers } from '@/src/api';
+import { fetchTravelers, createTraveler } from '@/src/api';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { Traveler } from '@/src/types';
 import { useUserRole } from '@/src/context/UserRoleContext';
@@ -14,10 +14,36 @@ export default function Travelers() {
   const { currentUser } = useUserRole();
   const [allTravelers, setAllTravelers] = useState<Traveler[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [formData, setFormData] = useState({ name: '', role: '', passportStatus: 'Valid' as 'Valid' | 'Expired', status: 'Compliant' as 'Compliant' | 'Non-Compliant' });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchTravelers().then(setAllTravelers).catch(console.error).finally(() => setLoading(false));
   }, []);
+
+  const handleAddTraveler = async () => {
+    if (!formData.name || !formData.role) return;
+    setSubmitting(true);
+    try {
+      const newTraveler = await createTraveler({
+        name: formData.name,
+        role: formData.role,
+        passportStatus: formData.passportStatus,
+        status: formData.status,
+        visaStatus: 'None',
+        visaRegion: '',
+        preferences: [],
+      });
+      setAllTravelers(prev => [...prev, newTraveler]);
+      setFormData({ name: '', role: '', passportStatus: 'Valid', status: 'Compliant' });
+      setShowAddForm(false);
+    } catch (err) {
+      console.error('Failed to add traveler:', err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   /* ── Role-based filtering ── */
   const travelers = useMemo(
@@ -116,11 +142,58 @@ export default function Travelers() {
             </div>
           </div>
         ))}
-        <div className="border-2 border-dashed border-outline-variant/30 rounded-2xl p-6 flex flex-col items-center justify-center text-on-surface-variant hover:border-primary/50 transition-all group cursor-pointer shadow-sm">
+        <div
+          onClick={() => setShowAddForm(true)}
+          className="border-2 border-dashed border-outline-variant/30 rounded-2xl p-6 flex flex-col items-center justify-center text-on-surface-variant hover:border-primary/50 transition-all group cursor-pointer shadow-sm"
+        >
           <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-on-primary transition-all"><UserPlus size={24} /></div>
           <span className="font-bold text-sm">Add New Traveler</span>
-          <p className="text-[11px] text-center mt-1 px-8">Add traveler data to input/travelers.txt</p>
+          <p className="text-[11px] text-center mt-1 px-8">Click to add a new traveler profile</p>
         </div>
+
+        {/* Add Traveler Modal */}
+        {showAddForm && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setShowAddForm(false)}>
+            <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-extrabold">Add New Traveler</h3>
+                <button onClick={() => setShowAddForm(false)} className="p-1 rounded-lg hover:bg-surface-container"><X size={20} /></button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1 block">Full Name *</label>
+                  <input type="text" value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Anna Korhonen" className="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm border-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1 block">Role / Department *</label>
+                  <input type="text" value={formData.role} onChange={e => setFormData(p => ({ ...p, role: e.target.value }))} placeholder="e.g. Developer, Finance Lead" className="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm border-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1 block">Passport</label>
+                    <select value={formData.passportStatus} onChange={e => setFormData(p => ({ ...p, passportStatus: e.target.value as any }))} className="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm border-none focus:ring-2 focus:ring-primary">
+                      <option value="Valid">Valid</option>
+                      <option value="Expired">Expired</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1 block">Compliance</label>
+                    <select value={formData.status} onChange={e => setFormData(p => ({ ...p, status: e.target.value as any }))} className="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm border-none focus:ring-2 focus:ring-primary">
+                      <option value="Compliant">Compliant</option>
+                      <option value="Non-Compliant">Non-Compliant</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <button onClick={() => setShowAddForm(false)} className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container rounded-lg">Cancel</button>
+                <button onClick={handleAddTraveler} disabled={submitting || !formData.name || !formData.role} className="px-6 py-2 bg-primary text-on-primary rounded-lg font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary-dim disabled:opacity-50 transition-all">
+                  {submitting ? 'Adding...' : 'Add Traveler'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {travelers.length > 0 && (

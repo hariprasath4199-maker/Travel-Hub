@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Loader2, ArrowRight, Plus, Plane, Search } from 'lucide-react';
 import { fetchTicketBookings, STEP_LABELS, STATUS_LABELS, type TicketBooking, type TicketBookingStatus } from '@/src/ticketApi';
-import { ROLE_LABELS } from '@/src/visaApi';
+import { ROLE_LABELS, fetchVisaRequests, type VisaRequest } from '@/src/visaApi';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { useUserRole } from '@/src/context/UserRoleContext';
 import { filterTicketBookings, ROLE_VIEW_INFO } from '@/src/utils/roleFilter';
@@ -11,23 +11,25 @@ type FilterTab = 'all' | 'active' | 'completed' | 'rejected';
 
 export default function TicketBookings() {
   const { currentUser } = useUserRole();
+  const navigate = useNavigate();
   const [allBookings, setAllBookings] = useState<TicketBooking[]>([]);
+  const [visaRequests, setVisaRequests] = useState<VisaRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
 
   useEffect(() => {
-    fetchTicketBookings()
-      .then(setAllBookings)
+    Promise.all([fetchTicketBookings(), fetchVisaRequests()])
+      .then(([bookings, visas]) => { setAllBookings(bookings); setVisaRequests(visas); })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
 
   /* ── Role-based filtering ── */
   const bookings = useMemo(
-    () => filterTicketBookings(allBookings, currentUser),
-    [allBookings, currentUser]
+    () => filterTicketBookings(allBookings, currentUser, visaRequests),
+    [allBookings, currentUser, visaRequests]
   );
 
   const isRejected = (s: TicketBookingStatus) => s === 'EVP_REJECTED';
@@ -110,7 +112,7 @@ export default function TicketBookings() {
         <div>
           <h1 className="text-2xl font-bold text-on-surface">Ticket Bookings</h1>
           <p className="text-sm text-on-surface-variant mt-1">
-            {bookings.length} booking{bookings.length !== 1 ? 's' : ''} visible to you
+            {filtered.length} booking{filtered.length !== 1 ? 's' : ''} visible to you
           </p>
         </div>
         <Link
@@ -191,9 +193,9 @@ export default function TicketBookings() {
               </thead>
               <tbody>
                 {filtered.map((booking) => (
-                  <tr key={booking.id} className="border-b border-outline-variant/5 hover:bg-surface-container-low/50 transition-colors">
+                  <tr key={booking.id} onClick={() => navigate(`/ticket-bookings/${booking.id}`)} className="border-b border-outline-variant/5 hover:bg-surface-container-low/50 transition-colors cursor-pointer">
                     <td className="px-6 py-4">
-                      <span className="text-xs font-mono text-on-surface-variant">{booking.id.slice(0, 8)}</span>
+                      <span className="text-xs font-mono text-on-surface-variant whitespace-nowrap">{booking.id}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div>

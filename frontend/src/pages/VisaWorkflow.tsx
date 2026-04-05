@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Loader2, ArrowRight, Plus, FileText, Search, Filter } from 'lucide-react';
 import { fetchVisaRequests, STEP_LABELS, STATUS_LABELS, ROLE_LABELS, type VisaRequest, type VisaRequestStatus } from '@/src/visaApi';
 import { StatusBadge } from '@/src/components/StatusBadge';
@@ -10,6 +10,7 @@ type FilterTab = 'all' | 'active' | 'confirmed' | 'rejected';
 
 export default function VisaWorkflow() {
   const { currentUser } = useUserRole();
+  const navigate = useNavigate();
   const [allRequests, setAllRequests] = useState<VisaRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +110,7 @@ export default function VisaWorkflow() {
         <div>
           <h1 className="text-2xl font-bold text-on-surface">Visa Bookings</h1>
           <p className="text-sm text-on-surface-variant mt-1">
-            {requests.length} request{requests.length !== 1 ? 's' : ''} visible to you
+            {filtered.length} request{filtered.length !== 1 ? 's' : ''} visible to you
           </p>
         </div>
         <Link
@@ -190,9 +191,9 @@ export default function VisaWorkflow() {
               </thead>
               <tbody>
                 {filtered.map((req) => (
-                  <tr key={req.id} className="border-b border-outline-variant/5 hover:bg-surface-container-low/50 transition-colors">
+                  <tr key={req.id} onClick={() => navigate(`/visa-requests/${req.id}`)} className="border-b border-outline-variant/5 hover:bg-surface-container-low/50 transition-colors cursor-pointer">
                     <td className="px-6 py-4">
-                      <span className="text-xs font-mono text-on-surface-variant">{req.id.slice(0, 8)}</span>
+                      <span className="text-xs font-mono text-on-surface-variant whitespace-nowrap">{req.id}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -206,7 +207,7 @@ export default function VisaWorkflow() {
                         />
                         <div>
                           <p className="text-sm font-bold text-on-surface">{req.employeeName}</p>
-                          <p className="text-xs text-on-surface-variant">{req.applicantEmail}</p>
+                          <p className="text-xs text-on-surface-variant">{req.employeeId ? `${req.employeeId} · ` : ''}{req.applicantEmail}</p>
                         </div>
                       </div>
                     </td>

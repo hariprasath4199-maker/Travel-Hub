@@ -1,0 +1,142 @@
+[
+  {
+    "id": "LOC-001",
+    "city": "Helsinki",
+    "country": "Finland",
+    "office": "Zalaris Helsinki HQ",
+    "region": "Nordics"
+  },
+  {
+    "id": "LOC-002",
+    "city": "Oslo",
+    "country": "Norway",
+    "office": "Zalaris Oslo Office",
+    "region": "Nordics"
+  },
+  {
+    "id": "LOC-003",
+    "city": "Stockholm",
+    "country": "Sweden",
+    "office": "Zalaris Stockholm Office",
+    "region": "Nordics"
+  },
+  {
+    "id": "LOC-004",
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "office": "Zalaris Copenhagen Office",
+    "region": "Nordics"
+  },
+  {
+    "id": "LOC-005",
+    "city": "Berlin",
+    "country": "Germany",
+    "office": "Zalaris Berlin Office",
+    "region": "Central Europe"
+  },
+  {
+    "id": "LOC-006",
+    "city": "Munich",
+    "country": "Germany",
+    "office": "Zalaris Munich Office",
+    "region": "Central Europe"
+  },
+  {
+    "id": "LOC-007",
+    "city": "Riga",
+    "country": "Latvia",
+    "office": "Zalaris Riga Office",
+    "region": "Baltics"
+  },
+  {
+    "id": "LOC-008",
+    "city": "Tallinn",
+    "country": "Estonia",
+    "office": "Zalaris Tallinn Office",
+    "region": "Baltics"
+  },
+  {
+    "id": "LOC-009",
+    "city": "London",
+    "country": "United Kingdom",
+    "office": "Zalaris London Office",
+    "region": "Western Europe"
+  },
+  {
+    "id": "LOC-010",
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "office": "Zalaris Amsterdam Office",
+    "region": "Western Europe"
+  },
+  {
+    "id": "LOC-011",
+    "city": "Paris",
+    "country": "France",
+    "office": "Zalaris Paris Office",
+    "region": "Western Europe"
+  },
+  {
+    "id": "LOC-012",
+    "city": "Zurich",
+    "country": "Switzerland",
+    "office": "Zalaris Zurich Office",
+    "region": "Central Europe"
+  },
+  {
+    "id": "LOC-013",
+    "city": "Warsaw",
+    "country": "Poland",
+    "office": "Zalaris Warsaw Office",
+    "region": "Central Europe"
+  },
+  {
+    "id": "LOC-014",
+    "city": "Vienna",
+    "country": "Austria",
+    "office": "Zalaris Vienna Office",
+    "region": "Central Europe"
+  },
+  {
+    "id": "LOC-015",
+    "city": "Chennai",
+    "country": "India",
+    "office": "Zalaris India Development Centre",
+    "region": "Asia Pacific"
+  },
+  {
+    "id": "LOC-016",
+    "city": "Bangalore",
+    "country": "India",
+    "office": "Zalaris Bangalore Office",
+    "region": "Asia Pacific"
+  },
+  {
+    "id": "LOC-017",
+    "city": "Dubai",
+    "country": "United Arab Emirates",
+    "office": "Zalaris Dubai Office",
+    "region": "Middle East"
+  },
+  {
+    "id": "LOC-018",
+    "city": "New York",
+    "country": "United States",
+    "office": "Zalaris US Office",
+    "region": "Americas"
+  },
+  {
+    "id": "LOC-019",
+    "city": "Singapore",
+    "country": "Singapore",
+    "office": "Zalaris Singapore Office",
+    "region": "Asia Pacific"
+  },
+  {
+    "id": "LOC-020",
+    "city": "Sydney",
+    "country": "Australia",
+    "office": "Zalaris Australia Office",
+    "region": "Asia Pacific"
+  }
+]

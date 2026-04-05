@@ -85,6 +85,7 @@ export function filterVisaRequestsByRole(
 export function filterTicketBookings(
   bookings: TicketBooking[],
   user: AppUser | null,
+  visaRequests?: VisaRequest[],
 ): TicketBooking[] {
   if (!user) return [];
   switch (user.role) {
@@ -92,11 +93,13 @@ export function filterTicketBookings(
       return bookings.filter(b => b.applicantEmail === user.email);
     case 'MANAGER':
       return bookings.filter(b => b.managerEmail === user.email);
-    case 'COST_CENTRE_OWNER':
-      // Match ticket bookings via their linked visa request's cost centre
-      // Since TicketBooking doesn't have costCentre directly, we match by applicant's department
-      // For now we use applicantName to match against known department mappings
-      return bookings; // Cost centre owners see all bookings (booking doesn't have cost centre)
+    case 'COST_CENTRE_OWNER': {
+      if (!visaRequests || !user.costCentre) return [];
+      const ccVisaIds = new Set(
+        visaRequests.filter(v => v.costCentre === user.costCentre).map(v => v.id)
+      );
+      return bookings.filter(b => b.visaRequestId && ccVisaIds.has(b.visaRequestId));
+    }
     case 'HR_ADMIN':
     case 'VENDOR':
     case 'EVP':

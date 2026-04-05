@@ -3,15 +3,15 @@
   "configurations": [
     {
       "name": "frontend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 3000,
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "3003"],
+      "port": 3003,
       "cwd": "frontend"
     },
     {
       "name": "backend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["tsx", "src/server.ts"],
       "port": 3001,
       "cwd": "backend"
     }

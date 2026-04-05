@@ -47,6 +47,13 @@ router.get('/:id', (req, res) => {
 
 // POST /api/visa-requests — Step 1: Manager submits
 router.post('/', async (req, res) => {
+  const { employeeName, applicantEmail, destination } = req.body;
+  const missing = [];
+  if (!employeeName?.trim()) missing.push('employeeName');
+  if (!applicantEmail?.trim()) missing.push('applicantEmail');
+  if (!destination?.trim()) missing.push('destination');
+  if (missing.length > 0) return res.status(400).json({ error: `Missing required fields: ${missing.join(', ')}` });
+
   const reqs = getRequests();
   const nextNum = reqs.length > 0 ? Math.max(...reqs.map(r => parseInt(r.id.replace('VISA-', '')) || 0)) + 1 : 5001;
   const now = new Date().toISOString();
@@ -57,10 +64,12 @@ router.post('/', async (req, res) => {
     status: 'SUBMITTED_TO_HR',
     createdAt: now,
     updatedAt: now,
+    employeeId: req.body.employeeId || '',
     employeeName: req.body.employeeName,
     employeeRole: req.body.employeeRole || '',
     employeeAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(req.body.employeeName || 'User')}&background=255dad&color=fff&size=128`,
     applicantEmail: req.body.applicantEmail || '',
+    applicantMobile: req.body.applicantMobile || undefined,
     managerName: req.body.managerName || '',
     managerEmail: req.body.managerEmail || '',
     destination: req.body.destination || '',
@@ -149,6 +158,12 @@ router.post('/:id/cost-centre-decision', async (req, res) => {
 
   const r = reqs[idx];
   const decision = req.body.decision; // 'approve' | 'reject'
+
+  // Rejection requires a reason/comment
+  if (decision === 'reject' && (!req.body.reason || !req.body.reason.trim())) {
+    return res.status(400).json({ error: 'A reason is required when rejecting the cost centre approval' });
+  }
+
   const targetStatus: VisaRequestStatus = decision === 'approve' ? 'COST_CENTRE_APPROVED' : 'COST_CENTRE_REJECTED';
   const v = validateTransition(r.status, targetStatus, 'COST_CENTRE_OWNER');
   if (!v.valid) return res.status(400).json({ error: v.error });
@@ -161,7 +176,7 @@ router.post('/:id/cost-centre-decision', async (req, res) => {
     if (r.managerEmail) await sendEmail({ to: r.managerEmail, ...email, requestId: r.id, templateName: 'cost-centre-approved' });
   } else {
     r.costCentreRejectedAt = new Date().toISOString();
-    r.costCentreRejectionReason = req.body.reason || '';
+    r.costCentreRejectionReason = req.body.reason;
     addEvent(r, 'Cost centre rejected', r.status, 'COST_CENTRE_REJECTED', r.costCentreOwnerName || 'Cost Centre Owner', 'COST_CENTRE_OWNER', req.body.reason);
     r.status = 'COST_CENTRE_REJECTED';
     const email = tpl.costCentreRejectedNotif(r);
@@ -309,6 +324,12 @@ router.post('/:id/evp-decision', async (req, res) => {
 
   const r = reqs[idx];
   const decision = req.body.decision;
+
+  // Rejection requires a reason/comment
+  if (decision === 'reject' && (!req.body.reason || !req.body.reason.trim())) {
+    return res.status(400).json({ error: 'A reason is required when rejecting the EVP approval' });
+  }
+
   const targetStatus: VisaRequestStatus = decision === 'approve' ? 'EVP_APPROVED' : 'EVP_REJECTED';
   const v = validateTransition(r.status, targetStatus, 'EVP');
   if (!v.valid) return res.status(400).json({ error: v.error });
@@ -321,7 +342,7 @@ router.post('/:id/evp-decision', async (req, res) => {
     if (r.managerEmail) await sendEmail({ to: r.managerEmail, ...email, requestId: r.id, templateName: 'evp-approved' });
   } else {
     r.evpRejectedAt = new Date().toISOString();
-    r.evpRejectionReason = req.body.reason || '';
+    r.evpRejectionReason = req.body.reason;
     addEvent(r, 'EVP rejected', r.status, 'EVP_REJECTED', r.evpName || 'EVP', 'EVP', req.body.reason);
     r.status = 'EVP_REJECTED';
     const email = tpl.evpRejectedNotif(r);

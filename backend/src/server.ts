@@ -9,6 +9,9 @@ import visaRequestsRouter from './routes/visaRequests.js';
 import uploadRouter from './routes/upload.js';
 import usersRouter from './routes/users.js';
 import actionsRouter from './routes/actions.js';
+import ticketBookingsRouter from './routes/ticketBookings.js';
+import { sendEmail } from './emailService.js';
+import * as tpl from './emailTemplates.js';
 
 const app = express();
 const PORT = 3001;
@@ -56,6 +59,7 @@ app.use('/api/upload', uploadRouter);
 app.use('/api/uploads', uploadRouter); // serve uploaded files
 app.use('/api/users', usersRouter);
 app.use('/api/action', actionsRouter);
+app.use('/api/ticket-bookings', ticketBookingsRouter);
 
 // ==================== LEGACY REQUESTS API ====================
 
@@ -72,6 +76,15 @@ app.get('/api/requests/:id', (req, res) => {
 });
 
 app.post('/api/requests', (req, res) => {
+  const { employeeName, destination, purpose, dates, department } = req.body;
+  const missing = [];
+  if (!employeeName?.trim()) missing.push('employeeName');
+  if (!destination?.trim()) missing.push('destination');
+  if (!purpose?.trim()) missing.push('purpose');
+  if (!dates?.trim()) missing.push('dates');
+  if (!department?.trim()) missing.push('department');
+  if (missing.length > 0) return res.status(400).json({ error: `Missing required fields: ${missing.join(', ')}` });
+
   const requests = readJsonFile<any[]>(path.join(INPUT_DIR, 'requests.txt'));
   const nextNum = requests.length > 0
     ? Math.max(...requests.map(r => parseInt(r.id.replace('REQ-', '')) || 0)) + 1
@@ -90,16 +103,33 @@ app.post('/api/requests', (req, res) => {
   res.status(201).json(newRequest);
 });
 
-app.put('/api/requests/:id/status', (req, res) => {
+app.put('/api/requests/:id/status', async (req, res) => {
   const { status } = req.body;
   if (!['APPROVED', 'DENIED', 'PENDING'].includes(status)) return res.status(400).json({ error: 'Invalid status' });
+
+  // Mandatory denial comment
+  if (status === 'DENIED' && (!req.body.reason || !req.body.reason.trim())) {
+    return res.status(400).json({ error: 'A reason is required when denying a travel request' });
+  }
 
   const requestsPath = path.join(INPUT_DIR, 'requests.txt');
   const requests = readJsonFile<any[]>(requestsPath);
   const index = requests.findIndex(r => r.id === req.params.id);
   if (index === -1) return res.status(404).json({ error: 'Request not found' });
 
+  // State machine: only allow transitions from PENDING
+  const currentStatus = requests[index].status;
+  const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+    PENDING: ['APPROVED', 'DENIED'],
+    APPROVED: [],
+    DENIED: [],
+  };
+  if (!(ALLOWED_TRANSITIONS[currentStatus] || []).includes(status)) {
+    return res.status(400).json({ error: `Cannot transition from ${currentStatus} to ${status}` });
+  }
+
   requests[index].status = status;
+  if (status === 'DENIED') requests[index].denialReason = req.body.reason;
   writeJsonFile(requestsPath, requests);
 
   if (status === 'APPROVED') {
@@ -113,6 +143,23 @@ app.put('/api/requests/:id/status', (req, res) => {
   }
 
   appendAuditLog({ action: `REQUEST_${status}`, requestId: req.params.id, timestamp: new Date().toISOString(), details: `Request ${req.params.id} marked as ${status}` });
+
+  // Send email notifications
+  const r = requests[index];
+  // Travel requests may not have applicantEmail — send to HR admin as primary recipient
+  const recipients = [r.applicantEmail, r.managerEmail, 'hr@zalaris.com'].filter(Boolean);
+  if (status === 'APPROVED') {
+    const email = tpl.travelRequestApproved(r);
+    for (const to of recipients) {
+      await sendEmail({ to, ...email, requestId: r.id, templateName: 'travel-request-approved' });
+    }
+  } else if (status === 'DENIED') {
+    const email = tpl.travelRequestDenied(r);
+    for (const to of recipients) {
+      await sendEmail({ to, ...email, requestId: r.id, templateName: 'travel-request-denied' });
+    }
+  }
+
   res.json(requests[index]);
 });
 
@@ -139,6 +186,11 @@ app.post('/api/travelers', (req, res) => {
   res.status(201).json(newTraveler);
 });
 
+// ==================== MASTER DATA API ====================
+
+app.get('/api/master/cost-centres', (_req, res) => { res.json(readJsonFile(path.join(INPUT_DIR, 'cost_centres.txt'))); });
+app.get('/api/master/locations', (_req, res) => { res.json(readJsonFile(path.join(INPUT_DIR, 'locations.txt'))); });
+
 // ==================== AUDIT & STATS ====================
 
 app.get('/api/audit-log', (_req, res) => { res.json(readJsonFile(path.join(OUTPUT_DIR, 'audit_log.txt'))); });
@@ -154,6 +206,7 @@ app.get('/api/stats', (_req, res) => {
   const requests = readJsonFile<any[]>(path.join(INPUT_DIR, 'requests.txt'));
   const travelers = readJsonFile<any[]>(path.join(INPUT_DIR, 'travelers.txt'));
   const visaRequests = readJsonFile<any[]>(path.join(INPUT_DIR, 'visa_requests.txt'));
+  const ticketBookings = readJsonFile<any[]>(path.join(INPUT_DIR, 'ticket_bookings.txt'));
 
   const pending = requests.filter(r => r.status === 'PENDING').length;
   const approved = requests.filter(r => r.status === 'APPROVED').length;
@@ -173,7 +226,17 @@ app.get('/api/stats', (_req, res) => {
       active: visaRequests.filter(r => r.status !== 'APPOINTMENT_CONFIRMED').length,
       confirmed: visaRequests.filter(r => r.status === 'APPOINTMENT_CONFIRMED').length,
     },
+    ticketBookings: {
+      total: ticketBookings.length,
+      active: ticketBookings.filter((b: any) => b.status !== 'COMPLETED' && b.status !== 'TICKET_SHARED').length,
+      completed: ticketBookings.filter((b: any) => b.status === 'COMPLETED' || b.status === 'TICKET_SHARED').length,
+    },
   });
+});
+
+// JSON 404 handler for unknown API routes
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'Not found', message: `Route not found` });
 });
 
 app.listen(PORT, () => {

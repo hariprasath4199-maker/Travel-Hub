@@ -1,0 +1,62 @@
+[
+  {
+    "id": "CC-FIN-001",
+    "name": "Finance - General",
+    "department": "Finance",
+    "description": "General finance operations and reporting"
+  },
+  {
+    "id": "CC-FIN-002",
+    "name": "Finance - Audit",
+    "department": "Finance",
+    "description": "Internal and external audit activities"
+  },
+  {
+    "id": "CC-DEV-001",
+    "name": "Engineering - Product Development",
+    "department": "Engineering",
+    "description": "Core product development and engineering"
+  },
+  {
+    "id": "CC-DEV-002",
+    "name": "Engineering - QA",
+    "department": "Engineering",
+    "description": "Quality assurance and testing"
+  },
+  {
+    "id": "CC-OPS-001",
+    "name": "Operations - General",
+    "department": "Operations",
+    "description": "Day-to-day operational activities"
+  },
+  {
+    "id": "CC-OPS-002",
+    "name": "Operations - Logistics",
+    "department": "Operations",
+    "description": "Supply chain and logistics operations"
+  },
+  {
+    "id": "CC-SAL-001",
+    "name": "Sales & Marketing",
+    "department": "Sales & Marketing",
+    "description": "Sales campaigns and marketing activities"
+  },
+  {
+    "id": "CC-HR-001",
+    "name": "Human Resources",
+    "department": "HR",
+    "description": "HR operations and employee management"
+  },
+  {
+    "id": "CC-EXE-001",
+    "name": "Executive Office",
+    "department": "Executive",
+    "description": "Executive leadership and strategy"
+  },
+  {
+    "id": "CC-PRD-001",
+    "name": "Product Design",
+    "department": "Product Design",
+    "description": "UX/UI design and product research"
+  }
+]

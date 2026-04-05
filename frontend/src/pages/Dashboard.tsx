@@ -222,7 +222,7 @@ function HeroBanner({ stats, roleLabel }: { stats: DashboardStats | null; roleLa
         </div>
 
         {/* ── 4 stat cards: passport / boarding pass style ── */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Monthly Spent — Passport stamp style */}
           <div className="rounded-xl p-4 relative overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(8px)' }}>
             <div className="absolute top-2 right-2 opacity-[0.04]">
@@ -377,61 +377,105 @@ function DeparturesBoard({ requests, emptyMessage }: { requests: TravelRequest[]
    SIDEBAR: Quick Action Cards
    ═══════════════════════════════════════════ */
 function SidebarPanel({ stats }: { stats: DashboardStats | null }) {
-  const total = stats?.totalRequests || 1;
-  const pendingPct = stats ? (stats.pendingRequests / Math.max(total, 1)) * 100 : 0;
-  const approvedPct = stats ? (stats.approvedRequests / Math.max(total, 1)) * 100 : 0;
+  const total = stats?.totalRequests || 0;
+  const pending = stats?.pendingRequests || 0;
+  const approved = stats?.approvedRequests || 0;
+  const denied = Math.max(0, total - pending - approved);
+  const safeTotal = Math.max(total, 1);
+
+  // Donut chart segments (SVG arc percentages)
+  const segments = [
+    { label: 'Approved', value: approved, color: '#10b981', glow: 'rgba(16,185,129,0.4)' },
+    { label: 'Pending', value: pending, color: '#f59e0b', glow: 'rgba(245,158,11,0.4)' },
+    { label: 'Denied', value: denied, color: '#6366f1', glow: 'rgba(99,102,241,0.4)' },
+  ];
+
+  // Build conic-gradient stops
+  let cumulative = 0;
+  const stops = segments.flatMap(seg => {
+    const start = cumulative;
+    const pct = (seg.value / safeTotal) * 100;
+    cumulative += pct;
+    return [`${seg.color} ${start}%`, `${seg.color} ${cumulative}%`];
+  });
+  // Fill remaining with dark
+  if (cumulative < 100) {
+    stops.push(`rgba(30,41,59,0.5) ${cumulative}%`, `rgba(30,41,59,0.5) 100%`);
+  }
+  const conicGradient = `conic-gradient(from -90deg, ${stops.join(', ')})`;
 
   return (
     <div className="space-y-5">
-      {/* Flight Radar — Request Summary */}
+      {/* Travel Analytics — Premium Panel */}
       <div className="rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(180deg, #0a1628, #0f1f3d)', border: '1px solid rgba(255,255,255,0.04)' }}>
-        <div className="px-4 py-3 flex items-center gap-2" style={{ background: 'rgba(0,0,0,0.2)' }}>
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 4px rgba(16,185,129,0.5)' }} />
-          <span className="text-[10px] font-mono text-emerald-400/70 tracking-[0.15em] uppercase font-bold">status Radar</span>
+        <div className="px-4 py-3 flex items-center justify-between" style={{ background: 'rgba(0,0,0,0.25)' }}>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-sky-400" style={{ boxShadow: '0 0 6px rgba(56,189,248,0.5)' }} />
+            <span className="text-[10px] font-mono text-sky-400/80 tracking-[0.15em] uppercase font-bold">Travel Analytics</span>
+          </div>
+          <span className="text-[9px] font-mono text-slate-500">Live</span>
         </div>
 
-        <div className="p-4 space-y-4">
-          {/* Radar visualization */}
-          <div className="relative w-full flex justify-center py-2">
-            <div className="relative w-32 h-32">
-              {/* Concentric circles */}
-              {[1, 0.7, 0.4].map((s, i) => (
-                <div key={i} className="absolute rounded-full" style={{ inset: `${(1 - s) * 50}%`, border: '1px solid rgba(56,189,248,0.08)' }} />
-              ))}
-              {/* Crosshairs */}
-              <div className="absolute top-1/2 left-0 right-0 h-[1px]" style={{ background: 'rgba(56,189,248,0.06)' }} />
-              <div className="absolute left-1/2 top-0 bottom-0 w-[1px]" style={{ background: 'rgba(56,189,248,0.06)' }} />
-              {/* Sweep */}
-              <div className="absolute inset-0 rounded-full overflow-hidden">
-                <div className="absolute top-0 left-1/2 w-1/2 h-1/2 origin-bottom-left" style={{ animation: 'radarSweep 3s linear infinite' }}>
-                  <div className="w-full h-full" style={{ background: 'conic-gradient(from 0deg, transparent, rgba(56,189,248,0.12))' }} />
-                </div>
+        <div className="p-5">
+          {/* Donut chart */}
+          <div className="relative w-full flex justify-center py-3">
+            <div className="relative w-36 h-36">
+              {/* Outer glow ring */}
+              <div className="absolute -inset-1 rounded-full opacity-20" style={{ background: conicGradient, filter: 'blur(6px)' }} />
+              {/* Main donut */}
+              <div className="absolute inset-0 rounded-full" style={{ background: conicGradient }} />
+              {/* Inner cutout */}
+              <div className="absolute rounded-full flex flex-col items-center justify-center"
+                   style={{ inset: '22%', background: 'linear-gradient(180deg, #0c1a2e, #0f1f3d)' }}>
+                <span className="text-2xl font-black text-white leading-none">{total}</span>
+                <span className="text-[8px] font-mono text-slate-400 uppercase tracking-widest mt-1">Requests</span>
               </div>
-              {/* Blips */}
-              <div className="absolute w-2 h-2 rounded-full bg-emerald-400" style={{ top: '25%', left: '60%', boxShadow: '0 0 6px rgba(16,185,129,0.6)', animation: 'blip 2s ease-in-out infinite' }} />
-              <div className="absolute w-1.5 h-1.5 rounded-full bg-amber-400" style={{ top: '55%', left: '30%', boxShadow: '0 0 6px rgba(251,191,36,0.6)', animation: 'blip 2.5s ease-in-out infinite 0.5s' }} />
-              <div className="absolute w-1.5 h-1.5 rounded-full bg-sky-400" style={{ top: '40%', left: '70%', boxShadow: '0 0 6px rgba(56,189,248,0.6)', animation: 'blip 3s ease-in-out infinite 1s' }} />
-              {/* Center */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-sky-400/50" style={{ boxShadow: '0 0 8px rgba(56,189,248,0.5)' }} />
+              {/* Subtle tick marks */}
+              {[0, 90, 180, 270].map(deg => (
+                <div key={deg} className="absolute top-1/2 left-1/2 w-[1px] h-full origin-center -translate-x-1/2 -translate-y-1/2"
+                     style={{ transform: `rotate(${deg}deg)`, background: 'rgba(255,255,255,0.03)' }} />
+              ))}
             </div>
           </div>
 
-          {/* Progress bars */}
-          {[
-            { label: 'Pending', value: stats?.pendingRequests || 0, pct: pendingPct, color: '#fbbf24' },
-            { label: 'Approved', value: stats?.approvedRequests || 0, pct: approvedPct, color: '#10b981' },
-            { label: 'Total Flights', value: stats?.totalRequests || 0, pct: 100, color: '#38bdf8' },
-          ].map(item => (
-            <div key={item.label}>
-              <div className="flex justify-between text-[9px] font-mono mb-1">
-                <span className="text-slate-400 uppercase tracking-wider">{item.label}</span>
-                <span style={{ color: item.color }}>{item.value}</span>
+          {/* Legend + metrics */}
+          <div className="mt-5 space-y-3">
+            {segments.map(seg => {
+              const pct = total > 0 ? Math.round((seg.value / safeTotal) * 100) : 0;
+              return (
+                <div key={seg.label} className="flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: seg.color, boxShadow: `0 0 6px ${seg.glow}` }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-baseline mb-1">
+                      <span className="text-[10px] font-mono text-slate-300 uppercase tracking-wider">{seg.label}</span>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-sm font-black text-white">{seg.value}</span>
+                        <span className="text-[9px] font-mono" style={{ color: seg.color }}>{pct}%</span>
+                      </div>
+                    </div>
+                    <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                      <div className="h-full rounded-full transition-all duration-1000 ease-out"
+                           style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${seg.color}cc, ${seg.color})`, boxShadow: `0 0 8px ${seg.glow}` }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Divider */}
+          <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <div className="text-lg font-black text-white">{stats?.totalTravelers || 0}</div>
+                <div className="text-[8px] font-mono text-slate-500 uppercase tracking-wider mt-0.5">Travelers</div>
               </div>
-              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${item.pct}%`, background: item.color, boxShadow: `0 0 6px ${item.color}40` }} />
+              <div className="rounded-lg p-3 text-center" style={{ background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.08)' }}>
+                <div className="text-lg font-black text-emerald-400">{stats?.monthlySpent || '€0'}</div>
+                <div className="text-[8px] font-mono text-emerald-500/50 uppercase tracking-wider mt-0.5">Budget Used</div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
@@ -556,7 +600,6 @@ export default function Dashboard() {
           100% { transform: translate(calc(100vw + 60px), -20px); opacity: 0; }
         }
         @keyframes radarSweep { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-        @keyframes blip { 0%,100%{opacity:.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.4)} }
       `}</style>
     </div>
   );

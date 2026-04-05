@@ -64,10 +64,12 @@ export interface VisaRequest {
   updatedAt: string;
 
   // Step 1: Manager submits
+  employeeId: string;
   employeeName: string;
   employeeRole: string;
   employeeAvatar: string;
   applicantEmail: string;
+  applicantMobile?: string;
   managerName: string;
   managerEmail: string;
   destination: string;

@@ -15,6 +15,15 @@ const ROLE_STYLES: Record<string, string> = {
   EVP: 'bg-emerald-100 text-emerald-800',
 };
 
+const ROLE_SHORT_LABELS: Record<string, string> = {
+  HR_ADMIN: 'HR',
+  MANAGER: 'MGR',
+  COST_CENTRE_OWNER: 'CCO',
+  VENDOR: 'VND',
+  APPLICANT: 'APP',
+  EVP: 'EVP',
+};
+
 export function RoleBadge({ role, className }: RoleBadgeProps) {
   return (
     <span
@@ -24,7 +33,8 @@ export function RoleBadge({ role, className }: RoleBadgeProps) {
         className,
       )}
     >
-      {ROLE_LABELS[role as UserRole] || role}
+      <span className="hidden sm:inline">{ROLE_LABELS[role as UserRole] || role}</span>
+      <span className="inline sm:hidden">{ROLE_SHORT_LABELS[role] || role}</span>
     </span>
   );
 }

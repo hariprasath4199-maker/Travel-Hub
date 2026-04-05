@@ -1,26 +1,28 @@
-import { Search, Bell, HelpCircle, ChevronDown } from 'lucide-react';
+import { Bell, HelpCircle, ChevronDown, Menu } from 'lucide-react';
 import { useUserRole } from '@/src/context/UserRoleContext';
 import { ROLE_LABELS, type UserRole } from '@/src/visaApi';
 
-export function TopBar() {
+interface TopBarProps {
+  onMenuClick: () => void;
+}
+
+export function TopBar({ onMenuClick }: TopBarProps) {
   const { currentUser, allUsers, switchRole } = useUserRole();
 
   return (
-    <header className="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white flex justify-between items-center px-8 z-40 border-b border-surface-container">
-      <div className="flex items-center gap-4 bg-surface-container-low px-4 py-2 rounded-full w-96">
-        <Search size={18} className="text-on-surface-variant" />
-        <input
-          className="bg-transparent border-none focus:ring-0 text-sm w-full font-sans placeholder:text-on-surface-variant/50"
-          placeholder="Search visa requests..."
-          type="text"
-        />
+    <header className="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 bg-white flex justify-between items-center px-4 md:px-8 z-40 border-b border-surface-container">
+      <div className="flex items-center gap-3">
+        <button onClick={onMenuClick} className="md:hidden p-2 rounded-lg hover:bg-surface-container-low text-slate-500">
+          <Menu size={22} />
+        </button>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 md:gap-6">
         {/* Role Switcher */}
         <div className="relative group">
           <button className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-primary/20 transition-colors">
-            {currentUser ? ROLE_LABELS[currentUser.role] : 'Loading...'}
+            <span className="hidden sm:inline">{currentUser ? ROLE_LABELS[currentUser.role] : 'Loading...'}</span>
+            <span className="sm:hidden text-[10px]">{currentUser ? ({ MANAGER: 'MGR', HR_ADMIN: 'HR', COST_CENTRE_OWNER: 'CCO', VENDOR: 'VND', APPLICANT: 'APP', EVP: 'EVP' }[currentUser.role] || currentUser.role.slice(0, 3)) : '...'}</span>
             <ChevronDown size={14} />
           </button>
           <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-surface-container p-2 min-w-48 hidden group-hover:block z-50">
@@ -41,7 +43,7 @@ export function TopBar() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 border-l border-outline-variant/20 pl-6">
+        <div className="hidden md:flex items-center gap-4 border-l border-outline-variant/20 pl-6">
           <button className="text-slate-500 hover:text-primary transition-all relative">
             <Bell size={20} />
             <span className="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
@@ -50,7 +52,7 @@ export function TopBar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-right">
+          <div className="text-right hidden sm:block">
             <p className="text-sm font-semibold text-on-surface leading-none">{currentUser?.name || 'Loading...'}</p>
             <p className="text-[10px] text-on-surface-variant font-medium tracking-wide uppercase mt-1">{currentUser ? ROLE_LABELS[currentUser.role] : ''}</p>
           </div>

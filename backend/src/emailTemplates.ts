@@ -2,11 +2,31 @@ import { VisaRequest } from './types.js';
 
 const APP_URL = process.env.APP_BASE_URL || 'http://localhost:3000';
 
-function layout(title: string, body: string): string {
+/** Format ISO date string to dd-mm-yyyy */
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const yyyy = d.getUTCFullYear();
+  return `${dd}-${mm}-${yyyy}`;
+}
+
+/** Format ISO datetime string to dd-mm-yyyy HH:mm (24h) */
+function fmtDateTime(iso: string): string {
+  const d = new Date(iso);
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const yyyy = d.getUTCFullYear();
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const min = String(d.getUTCMinutes()).padStart(2, '0');
+  return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
+}
+
+function layout(title: string, body: string, subtitle = 'Visa Appointment Workflow'): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#2a3439;">
     <div style="background:#255dad;color:white;padding:20px;border-radius:12px 12px 0 0;text-align:center;">
       <h1 style="margin:0;font-size:20px;">Zalaris Travel</h1>
-      <p style="margin:4px 0 0;font-size:12px;opacity:0.8;">Visa Appointment Workflow</p>
+      <p style="margin:4px 0 0;font-size:12px;opacity:0.8;">${subtitle}</p>
     </div>
     <div style="background:#f7f9fb;padding:24px;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;">
       <h2 style="color:#255dad;margin-top:0;">${title}</h2>
@@ -233,6 +253,232 @@ export function bookingConfirmedAll(r: VisaRequest): { subject: string; html: st
       <p><strong>Vendor Reference:</strong> ${r.vendorConfirmationReference}</p>
       <p><strong>Total Cost:</strong> €${r.costProposal?.totalCost.toFixed(2)}</p>
       <p>${btn(`${APP_URL}/visa-requests/${r.id}`, 'View Full Details')}</p>
+    `),
+  };
+}
+
+// ==================== TRAVEL REQUEST EMAIL TEMPLATES ====================
+
+interface TravelRequestEmail {
+  id: string;
+  employeeName: string;
+  destination: string;
+  dates?: string;
+  purpose?: string;
+  cost?: string;
+  department?: string;
+  denialReason?: string;
+}
+
+// Travel Request Approved
+export function travelRequestApproved(r: TravelRequestEmail): { subject: string; html: string } {
+  return {
+    subject: `[${r.id}] Travel Request Approved — ${r.employeeName}`,
+    html: layout('Travel Request Approved', `
+      <p>The travel request for <strong>${r.employeeName}</strong> has been <strong style="color:#006d4a;">approved</strong>.</p>
+      <p><strong>Destination:</strong> ${r.destination}</p>
+      <p><strong>Travel Dates:</strong> ${r.dates || '—'}</p>
+      <p><strong>Purpose:</strong> ${r.purpose || '—'}</p>
+      <p><strong>Estimated Budget:</strong> ${r.cost || '—'}</p>
+      <p>${btn(`${APP_URL}/requests`, 'View in Portal')}</p>
+    `, 'Travel Request Workflow'),
+  };
+}
+
+// Travel Request Denied
+export function travelRequestDenied(r: TravelRequestEmail): { subject: string; html: string } {
+  return {
+    subject: `[${r.id}] Travel Request Denied — ${r.employeeName}`,
+    html: layout('Travel Request Denied', `
+      <p>The travel request for <strong>${r.employeeName}</strong> has been <strong style="color:#9f403d;">denied</strong>.</p>
+      <p><strong>Destination:</strong> ${r.destination}</p>
+      <p><strong>Travel Dates:</strong> ${r.dates || '—'}</p>
+      <p><strong>Purpose:</strong> ${r.purpose || '—'}</p>
+      <p><strong>Reason:</strong> "${r.denialReason || 'No reason provided'}"</p>
+      <p>${btn(`${APP_URL}/requests`, 'View in Portal')}</p>
+    `, 'Travel Request Workflow'),
+  };
+}
+
+// ==================== TICKET BOOKING EMAIL TEMPLATES ====================
+
+interface TicketBookingEmail {
+  id: string;
+  applicantName: string;
+  applicantEmail?: string;
+  managerName?: string;
+  managerEmail?: string;
+  destination: string;
+  travelStartDate?: string;
+  travelEndDate?: string;
+  purpose?: string;
+  selectedItinerary?: {
+    airline: string;
+    flightNumber: string;
+    departureTime: string;
+    arrivalTime: string;
+    price: number;
+    currency: string;
+    class: string;
+    stops: number;
+  };
+  itineraryOptions?: any[];
+  evpName?: string;
+  evpComments?: string;
+  bookedTicket?: {
+    airline: string;
+    flightNumber: string;
+    departure: string;
+    arrival: string;
+    bookingRef: string;
+  };
+}
+
+function tbLayout(title: string, body: string): string {
+  return layout(title, body, 'Ticket Booking Workflow');
+}
+
+function itineraryTable(it: TicketBookingEmail['selectedItinerary']): string {
+  if (!it) return '';
+  return `<table style="width:100%;border-collapse:collapse;margin:16px 0;">
+    <tr><td style="padding:8px;border-bottom:1px solid #eee;">Airline</td><td style="text-align:right;padding:8px;border-bottom:1px solid #eee;">${it.airline} ${it.flightNumber}</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid #eee;">Departure</td><td style="text-align:right;padding:8px;border-bottom:1px solid #eee;">${fmtDateTime(it.departureTime)}</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid #eee;">Arrival</td><td style="text-align:right;padding:8px;border-bottom:1px solid #eee;">${fmtDateTime(it.arrivalTime)}</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid #eee;">Class</td><td style="text-align:right;padding:8px;border-bottom:1px solid #eee;">${it.class}</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid #eee;">Stops</td><td style="text-align:right;padding:8px;border-bottom:1px solid #eee;">${it.stops === 0 ? 'Direct' : it.stops}</td></tr>
+    <tr style="font-weight:bold;background:#f0f4f8;"><td style="padding:8px;">Price</td><td style="text-align:right;padding:8px;">€${it.price.toFixed(2)}</td></tr>
+  </table>`;
+}
+
+// TB Step 1: Notify HR Admin of new ticket booking request
+export function tbRequestSubmitted(b: TicketBookingEmail): { subject: string; html: string } {
+  return {
+    subject: `[${b.id}] New Ticket Booking Request — ${b.applicantName} → ${b.destination}`,
+    html: tbLayout('New Ticket Booking Request', `
+      <p>A new ticket booking request has been submitted and requires your action.</p>
+      <p><strong>Applicant:</strong> ${b.applicantName}</p>
+      <p><strong>Destination:</strong> ${b.destination}</p>
+      <p><strong>Travel Dates:</strong> ${b.travelStartDate ? fmtDate(b.travelStartDate) : '—'} to ${b.travelEndDate ? fmtDate(b.travelEndDate) : '—'}</p>
+      <p><strong>Purpose:</strong> ${b.purpose || '—'}</p>
+      <p><strong>Requested By:</strong> ${b.managerName || '—'} (Manager)</p>
+      <p>${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Review in Portal')}</p>
+    `),
+  };
+}
+
+// TB Step 2: Request itinerary from vendor
+export function tbItineraryRequested(b: TicketBookingEmail): { subject: string; html: string } {
+  return {
+    subject: `[${b.id}] Itinerary Request — ${b.applicantName} → ${b.destination}`,
+    html: tbLayout('Itinerary Request', `
+      <p>Please provide flight itinerary options for the following booking.</p>
+      <p><strong>Applicant:</strong> ${b.applicantName}</p>
+      <p><strong>Destination:</strong> ${b.destination}</p>
+      <p><strong>Travel Dates:</strong> ${b.travelStartDate ? fmtDate(b.travelStartDate) : '—'} to ${b.travelEndDate ? fmtDate(b.travelEndDate) : '—'}</p>
+      <p><strong>Purpose:</strong> ${b.purpose || '—'}</p>
+      <p>${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Submit Itinerary Options')}</p>
+    `),
+  };
+}
+
+// TB Step 3: Vendor submitted itinerary — notify HR Admin
+export function tbItineraryProvided(b: TicketBookingEmail): { subject: string; html: string } {
+  const count = b.itineraryOptions?.length || 0;
+  return {
+    subject: `[${b.id}] Itinerary Options Available — ${b.applicantName}`,
+    html: tbLayout('Itinerary Options Received', `
+      <p>The vendor has submitted flight itinerary options for review.</p>
+      <p><strong>Applicant:</strong> ${b.applicantName}</p>
+      <p><strong>Destination:</strong> ${b.destination}</p>
+      <p><strong>Options:</strong> ${count} itinerary option(s) available</p>
+      <p>Please review and share with EVP for approval.</p>
+      <p>${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Review Itinerary Options')}</p>
+    `),
+  };
+}
+
+// TB Step 4: Itinerary shared with EVP for approval
+export function tbEvpApprovalRequest(b: TicketBookingEmail): { subject: string; html: string } {
+  return {
+    subject: `[${b.id}] Travel Itinerary Approval Required — ${b.applicantName} → ${b.destination}`,
+    html: tbLayout('Travel Itinerary Approval Required', `
+      <p>A flight itinerary requires your executive approval.</p>
+      <p><strong>Applicant:</strong> ${b.applicantName}</p>
+      <p><strong>Destination:</strong> ${b.destination}</p>
+      <p><strong>Travel Dates:</strong> ${b.travelStartDate ? fmtDate(b.travelStartDate) : '—'} to ${b.travelEndDate ? fmtDate(b.travelEndDate) : '—'}</p>
+      <p><strong>Selected Itinerary:</strong></p>
+      ${itineraryTable(b.selectedItinerary)}
+      <div style="margin:20px 0;">
+        ${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Approve', '#006d4a')}
+        ${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Reject', '#9f403d')}
+      </div>
+    `),
+  };
+}
+
+// TB Step 5a: EVP Approved
+export function tbEvpApproved(b: TicketBookingEmail): { subject: string; html: string } {
+  return {
+    subject: `[${b.id}] EVP Approved — ${b.applicantName} Travel Booking`,
+    html: tbLayout('Travel Itinerary Approved', `
+      <p>The EVP has <strong style="color:#006d4a;">approved</strong> the travel itinerary for ${b.applicantName}.</p>
+      <p><strong>Approved By:</strong> ${b.evpName || '—'} (EVP)</p>
+      ${b.evpComments ? `<p><strong>Comments:</strong> "${b.evpComments}"</p>` : ''}
+      ${b.selectedItinerary ? `<p><strong>Approved Itinerary:</strong> ${b.selectedItinerary.airline} ${b.selectedItinerary.flightNumber} | ${fmtDate(b.selectedItinerary.departureTime)} | €${b.selectedItinerary.price.toFixed(2)}</p>` : ''}
+      <p>HR Admin can now proceed to request ticket booking from the vendor.</p>
+      <p>${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Continue Workflow')}</p>
+    `),
+  };
+}
+
+// TB Step 5b: EVP Rejected
+export function tbEvpRejected(b: TicketBookingEmail & { rejectionReason: string }): { subject: string; html: string } {
+  return {
+    subject: `[${b.id}] EVP Rejected — ${b.applicantName} Travel Booking`,
+    html: tbLayout('Travel Itinerary Rejected', `
+      <p>The EVP has <strong style="color:#9f403d;">rejected</strong> the travel itinerary for ${b.applicantName}.</p>
+      <p><strong>Rejected By:</strong> ${b.evpName || '—'} (EVP)</p>
+      <p><strong>Reason:</strong> "${b.rejectionReason}"</p>
+      <p>Please revise the itinerary and resubmit for approval.</p>
+      <p>${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Review Request')}</p>
+    `),
+  };
+}
+
+// TB Step 6a: Ticket booked by vendor — notify HR Admin
+export function tbTicketBooked(b: TicketBookingEmail): { subject: string; html: string } {
+  const t = b.bookedTicket;
+  return {
+    subject: `[${b.id}] Ticket Booked — ${b.applicantName} → ${b.destination}`,
+    html: tbLayout('Ticket Successfully Booked', `
+      <p>The vendor has booked the travel ticket.</p>
+      <p><strong>Applicant:</strong> ${b.applicantName}</p>
+      ${t ? `
+      <p><strong>Flight:</strong> ${t.airline} ${t.flightNumber}</p>
+      <p><strong>Booking Reference:</strong> ${t.bookingRef}</p>
+      <p><strong>Departure:</strong> ${fmtDateTime(t.departure)}</p>
+      <p><strong>Arrival:</strong> ${fmtDateTime(t.arrival)}</p>
+      ` : ''}
+      <p>Please share the ticket with the manager and applicant.</p>
+      <p>${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'Share Ticket')}</p>
+    `),
+  };
+}
+
+// TB Step 6b: Ticket shared — notify manager + applicant
+export function tbTicketShared(b: TicketBookingEmail): { subject: string; html: string } {
+  const t = b.bookedTicket;
+  return {
+    subject: `[${b.id}] Your Travel Ticket — ${b.applicantName} → ${b.destination}`,
+    html: tbLayout('Your Travel Ticket is Ready!', `
+      <p>The travel ticket for <strong>${b.applicantName}</strong> has been booked and is ready.</p>
+      ${t ? `
+      <p><strong>Flight:</strong> ${t.airline} ${t.flightNumber}</p>
+      <p><strong>Booking Reference:</strong> ${t.bookingRef}</p>
+      <p><strong>Departure:</strong> ${fmtDateTime(t.departure)}</p>
+      <p><strong>Arrival:</strong> ${fmtDateTime(t.arrival)}</p>
+      ` : ''}
+      <p>${btn(`${APP_URL}/ticket-bookings/${b.id}`, 'View Ticket Details')}</p>
     `),
   };
 }

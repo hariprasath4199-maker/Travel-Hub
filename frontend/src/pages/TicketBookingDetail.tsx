@@ -178,6 +178,10 @@ export default function TicketBookingDetail() {
             <h2 className="text-lg font-bold text-on-surface">Request Details</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Employee ID</p>
+                <p className="text-on-surface mt-1">{booking.employeeId || '--'}</p>
+              </div>
+              <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Applicant</p>
                 <p className="text-on-surface mt-1">{booking.applicantName}</p>
                 <p className="text-sm text-on-surface-variant">{booking.applicantEmail}</p>

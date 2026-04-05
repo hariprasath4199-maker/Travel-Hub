@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import {
   Loader2, ArrowLeft, User, Mail, Globe, Calendar, Building2, CreditCard,
   FileText, MessageSquare, ChevronDown, ChevronUp, Send, CheckCircle, XCircle,
-  Clock, MapPin, Euro, RefreshCw,
+  Clock, MapPin, Euro, RefreshCw, Hash,
 } from 'lucide-react';
 import {
   fetchVisaRequest, fetchEmailLog, submitCostProposal, sendCostCentreApproval,
@@ -496,6 +496,7 @@ export default function VisaRequestDetail() {
       <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm">
         <h3 className="text-lg font-bold font-headline mb-4 border-b border-surface-container pb-3">Request Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <InfoItem icon={Hash} label="Employee ID" value={request.employeeId || '--'} />
           <InfoItem icon={User} label="Applicant" value={request.employeeName} />
           <InfoItem icon={Mail} label="Email" value={request.applicantEmail} />
           <InfoItem icon={FileText} label="Visa Type" value={request.employeeRole || '--'} />

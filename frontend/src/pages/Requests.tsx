@@ -147,7 +147,7 @@ export default function Requests() {
                           <img className="w-10 h-10 rounded-full object-cover" src={req.avatar} alt={req.employeeName} />
                           <div>
                             <p className="text-sm font-bold font-headline leading-none">{req.employeeName}</p>
-                            <p className="text-[11px] text-on-surface-variant">{req.role}</p>
+                            <p className="text-[11px] text-on-surface-variant">{req.employeeId || req.role}</p>
                           </div>
                         </div>
                       </td>

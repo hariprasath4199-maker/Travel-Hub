@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, MapPin, Send, Loader2 } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Loader2 } from 'lucide-react';
 import { fetchRequestById, updateRequestStatus } from '@/src/api';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { TravelRequest } from '@/src/types';
@@ -116,10 +116,7 @@ export default function RequestDetail() {
           </section>
           <section className="p-6 bg-surface-container-lowest rounded-xl shadow-sm">
             <h3 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">Internal Notes</h3>
-            <div className="relative">
-              <textarea className="w-full bg-surface-container-low border-none rounded-xl text-sm p-4 h-24 focus:ring-2 focus:ring-primary/20 placeholder:text-on-surface-variant/50 resize-none" placeholder="Add a note..."></textarea>
-              <button className="absolute bottom-3 right-3 w-8 h-8 bg-primary text-on-primary rounded-lg flex items-center justify-center active:scale-95 transition-all shadow-md"><Send size={16} /></button>
-            </div>
+            <textarea className="w-full bg-surface-container-low border-none rounded-xl text-sm p-4 h-24 focus:ring-2 focus:ring-primary/20 placeholder:text-on-surface-variant/50 resize-none" placeholder="Notes are stored locally in this session..."></textarea>
           </section>
         </div>
       </div>

@@ -35,7 +35,7 @@ export function RunwayProgressTracker({ status, currentStep }: Props) {
 
   const totalSteps = 9;
   const completed = isFinal ? totalSteps : activeStep - 1;
-  const pct = Math.min((completed / (totalSteps - 1)) * 100, 100);
+  const pct = Math.min((completed / totalSteps) * 100, 100);
 
   const accent = isFinal ? '#10b981' : isRejected ? '#ef4444' : '#38bdf8';
 
