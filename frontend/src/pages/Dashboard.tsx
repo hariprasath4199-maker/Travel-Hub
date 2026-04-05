@@ -10,72 +10,58 @@ import { fetchRequests, fetchStats, type DashboardStats } from '@/src/api';
 import { TravelRequest } from '@/src/types';
 import { useUserRole } from '@/src/context/UserRoleContext';
 import { fetchVisaRequests, type VisaRequest, type UserRole, ROLE_LABELS } from '@/src/visaApi';
+import { canCreateRequest, canAccessNav } from '@/src/utils/roleFilter';
 
 /* ═══════════════════════════════════════════
    ROLE-BASED FILTERING LOGIC
-   ═══════════════════════════════════════════
-   APPLICANT          → Only their own requests (matched by email)
-   MANAGER            → Only their reportees' requests (where they are the manager)
-   HR_ADMIN           → All data (admin access)
-   COST_CENTRE_OWNER  → Only requests in their cost centre
-   VENDOR             → All data (full visibility)
-   EVP                → All data (executive view)
    ═══════════════════════════════════════════ */
 
 /* ── Role description shown in the banner ── */
 const ROLE_VIEW_INFO: Record<UserRole, { icon: typeof Eye; label: string; desc: string; color: string }> = {
-  APPLICANT:          { icon: UserCheck, label: 'My Travel History',          desc: 'Viewing only your own travel requests and applications', color: '#8b5cf6' },
-  MANAGER:            { icon: Users,     label: 'Team Overview',              desc: 'Viewing travel data for your direct reportees',         color: '#0ea5e9' },
-  HR_ADMIN:           { icon: Shield,    label: 'Admin Access',               desc: 'Full visibility across all travel requests and data',   color: '#10b981' },
-  COST_CENTRE_OWNER:  { icon: Building,  label: 'Cost Centre View',           desc: 'Viewing requests charged to your cost centre',          color: '#f59e0b' },
-  VENDOR:             { icon: Globe,     label: 'Vendor Portal',              desc: 'Full visibility across all travel and visa data',       color: '#ec4899' },
-  EVP:                { icon: Briefcase, label: 'Executive View',             desc: 'Full visibility — executive oversight',                 color: '#6366f1' },
+  ADMIN:      { icon: Shield,    label: 'Admin Access',      desc: 'Full access to all data, settings, and administration',          color: '#dc2626' },
+  EMPLOYEE:   { icon: UserCheck, label: 'My Requests',       desc: 'Viewing only your own travel requests and applications',         color: '#0ea5e9' },
+  MANAGER:    { icon: Users,     label: 'Team Overview',      desc: 'Viewing travel data for yourself and your direct reportees',     color: '#7c3aed' },
+  HRBP:       { icon: Shield,    label: 'HR Access',          desc: 'Full visibility across all travel requests and data',            color: '#059669' },
+  EXECUTIVE:  { icon: Briefcase, label: 'Executive View',     desc: 'Full visibility — executive oversight across all data',          color: '#6366f1' },
+  FINANCE:    { icon: Building,  label: 'Finance View',       desc: 'Read-only access to all travel and cost data',                   color: '#d97706' },
+  VENDOR:     { icon: Globe,     label: 'Vendor Portal',      desc: 'Access to vendor-related workflow areas only',                   color: '#ec4899' },
 };
 
 /* ── Filter travel requests based on role ── */
 function filterRequests(requests: TravelRequest[], role: UserRole, userEmail: string, userName: string, userCostCentre?: string): TravelRequest[] {
   switch (role) {
-    case 'APPLICANT':
-      // Applicant sees only their own requests (match by name since TravelRequest doesn't have email)
+    case 'EMPLOYEE':
       return requests.filter(r => r.employeeName === userName);
     case 'MANAGER':
-      // Manager sees their reportees — in demo data, the manager submitted all requests,
-      // so we show requests where the employee is NOT the manager themselves (i.e. their team)
-      return requests.filter(r => r.employeeName !== userName);
-    case 'COST_CENTRE_OWNER':
-      // Cost centre owner sees requests from their department/cost centre
-      // Since TravelRequest has 'department', we map cost centre to department
-      return requests.filter(r => {
-        if (userCostCentre === 'CC-FIN-001') return r.department === 'Finance';
-        if (userCostCentre === 'CC-DEV-001') return r.department === 'Engineering';
-        if (userCostCentre === 'CC-ENG-002') return r.department === 'Product';
-        return false;
-      });
-    case 'HR_ADMIN':
+      return requests;
     case 'VENDOR':
-    case 'EVP':
-      // Full access
+      return [];
+    case 'ADMIN':
+    case 'HRBP':
+    case 'EXECUTIVE':
+    case 'FINANCE':
       return requests;
     default:
-      return requests;
+      return [];
   }
 }
 
 /* ── Filter visa requests based on role ── */
 function filterVisaRequests(visaRequests: VisaRequest[], role: UserRole, userEmail: string, userName: string, userCostCentre?: string): VisaRequest[] {
   switch (role) {
-    case 'APPLICANT':
+    case 'EMPLOYEE':
       return visaRequests.filter(v => v.applicantEmail === userEmail);
     case 'MANAGER':
-      return visaRequests.filter(v => v.managerEmail === userEmail);
-    case 'COST_CENTRE_OWNER':
-      return visaRequests.filter(v => v.costCentre === userCostCentre);
-    case 'HR_ADMIN':
+      return visaRequests.filter(v => v.managerEmail === userEmail || v.applicantEmail === userEmail);
     case 'VENDOR':
-    case 'EVP':
+      return visaRequests.filter(v => ['AWAITING_VENDOR_AVAILABILITY', 'VENDOR_DATES_RECEIVED', 'DATE_BLOCKING_REQUESTED', 'APPOINTMENT_CONFIRMED'].includes(v.status));
+    case 'ADMIN':
+    case 'HRBP':
+    case 'EXECUTIVE':
+    case 'FINANCE':
       return visaRequests;
     default:
-      return visaRequests;
+      return [];
   }
 }
 
@@ -376,7 +362,7 @@ function DeparturesBoard({ requests, emptyMessage }: { requests: TravelRequest[]
 /* ═══════════════════════════════════════════
    SIDEBAR: Quick Action Cards
    ═══════════════════════════════════════════ */
-function SidebarPanel({ stats }: { stats: DashboardStats | null }) {
+function SidebarPanel({ stats, role }: { stats: DashboardStats | null; role: UserRole }) {
   const total = stats?.totalRequests || 0;
   const pending = stats?.pendingRequests || 0;
   const approved = stats?.approvedRequests || 0;
@@ -486,11 +472,11 @@ function SidebarPanel({ stats }: { stats: DashboardStats | null }) {
         </div>
         <div className="p-3 space-y-2">
           {[
-            { to: '/visa-requests', icon: Shield, label: 'Visa Bookings', desc: 'Process visa applications', color: '#8b5cf6' },
-            { to: '/ticket-bookings', icon: Ticket, label: 'Ticket Booking', desc: 'Manage flight bookings', color: '#0ea5e9' },
-            { to: '/requests/new', icon: Plane, label: 'New Request', desc: 'Submit travel authorization', color: '#10b981' },
-            { to: '/travelers', icon: Users, label: 'Travelers', desc: 'Manage profiles', color: '#f59e0b' },
-          ].map(item => (
+            { to: '/visa-requests', icon: Shield, label: 'Visa Bookings', desc: 'Process visa applications', color: '#8b5cf6', nav: 'visa-requests' as const },
+            { to: '/ticket-bookings', icon: Ticket, label: 'Ticket Booking', desc: 'Manage flight bookings', color: '#0ea5e9', nav: 'ticket-bookings' as const },
+            ...(canCreateRequest(role) ? [{ to: '/requests/new', icon: Plane, label: 'New Request', desc: 'Submit travel authorization', color: '#10b981', nav: 'requests' as const }] : []),
+            ...(canAccessNav(role, 'travelers') ? [{ to: '/travelers', icon: Users, label: 'Travelers', desc: 'Manage profiles', color: '#f59e0b', nav: 'travelers' as const }] : []),
+          ].filter(item => canAccessNav(role, item.nav)).map(item => (
             <Link key={item.to} to={item.to}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/[0.03] transition-all group">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -530,7 +516,7 @@ export default function Dashboard() {
   }, []);
 
   /* ── Apply role-based filtering ── */
-  const role = currentUser?.role || 'APPLICANT';
+  const role = currentUser?.role || 'EMPLOYEE';
   const userEmail = currentUser?.email || '';
   const userName = currentUser?.name || '';
   const userCostCentre = currentUser?.costCentre;
@@ -552,12 +538,13 @@ export default function Dashboard() {
 
   /* ── Empty state messages per role ── */
   const emptyMessages: Record<UserRole, string> = {
-    APPLICANT:         'You have no travel requests yet',
-    MANAGER:           'No travel requests from your team',
-    HR_ADMIN:          'No travel requests in the system',
-    COST_CENTRE_OWNER: 'No requests in your cost centre',
-    VENDOR:            'No travel requests in the system',
-    EVP:               'No travel requests in the system',
+    ADMIN:      'No travel requests in the system',
+    EMPLOYEE:   'You have no travel requests yet',
+    MANAGER:    'No travel requests from your team',
+    HRBP:       'No travel requests in the system',
+    EXECUTIVE:  'No travel requests in the system',
+    FINANCE:    'No travel requests in the system',
+    VENDOR:     'No vendor-related requests',
   };
 
   if (loading) {
@@ -586,7 +573,7 @@ export default function Dashboard() {
 
         {/* Sidebar */}
         <aside className="col-span-12 xl:col-span-4">
-          <SidebarPanel stats={filteredStats} />
+          <SidebarPanel stats={filteredStats} role={role} />
         </aside>
       </div>
 

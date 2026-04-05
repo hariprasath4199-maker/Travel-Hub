@@ -10,8 +10,8 @@ export default function Step8EvpApproval({ request, currentUser, onActionComplet
   const [evpName, setEvpName] = useState(request.evpName ?? '');
   const [evpEmail, setEvpEmail] = useState(request.evpEmail ?? '');
 
-  const isHrAdmin = currentUser.role === 'HR_ADMIN';
-  const isEvp = currentUser.role === 'EVP';
+  const isHrAdmin = currentUser.role === 'HRBP' || currentUser.role === 'ADMIN';
+  const isEvp = currentUser.role === 'EXECUTIVE' || currentUser.role === 'ADMIN';
   const costProposal = request.costProposal;
 
   const handleSendForApproval = async () => {

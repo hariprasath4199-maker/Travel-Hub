@@ -7,12 +7,12 @@ export type VisaRequestStatus =
   | 'PENDING_EVP_APPROVAL' | 'EVP_APPROVED' | 'EVP_REJECTED'
   | 'DATE_BLOCKING_REQUESTED' | 'APPOINTMENT_CONFIRMED';
 
-export type UserRole = 'MANAGER' | 'HR_ADMIN' | 'COST_CENTRE_OWNER' | 'VENDOR' | 'APPLICANT' | 'EVP';
+export type UserRole = 'ADMIN' | 'EMPLOYEE' | 'MANAGER' | 'HRBP' | 'EXECUTIVE' | 'FINANCE' | 'VENDOR';
 
 export interface AppUser { id: string; name: string; email: string; role: UserRole; avatar?: string; costCentre?: string; }
 export interface VendorDateSlot { date: string; time: string; location: string; slotId: string; }
 export interface CostProposal { visaFees: number; serviceFees: number; travelCost: number; accommodationCost: number; otherCosts: number; totalCost: number; currency: string; notes?: string; }
-export interface WorkflowEvent { id: string; step: number; action: string; fromStatus: VisaRequestStatus | null; toStatus: VisaRequestStatus; performedBy: string; performedByRole: UserRole; timestamp: string; comments?: string; }
+export interface WorkflowEvent { id: string; step: number; action: string; fromStatus: VisaRequestStatus | null; toStatus: VisaRequestStatus; performedBy: string; performedByRole: string; timestamp: string; comments?: string; }
 
 export interface VisaRequest {
   id: string; currentStep: number; status: VisaRequestStatus; createdAt: string; updatedAt: string;
@@ -140,6 +140,6 @@ export const STATUS_TO_STEP: Record<VisaRequestStatus, number> = {
 };
 
 export const ROLE_LABELS: Record<UserRole, string> = {
-  MANAGER: 'Manager', HR_ADMIN: 'HR Admin', COST_CENTRE_OWNER: 'Cost Centre Owner',
-  VENDOR: 'Vendor', APPLICANT: 'Applicant', EVP: 'EVP',
+  ADMIN: 'Admin', EMPLOYEE: 'Employee', MANAGER: 'Manager',
+  HRBP: 'HRBP', EXECUTIVE: 'Executive', FINANCE: 'Finance', VENDOR: 'Vendor',
 };

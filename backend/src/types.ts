@@ -16,7 +16,7 @@ export type VisaRequestStatus =
   | 'DATE_BLOCKING_REQUESTED'
   | 'APPOINTMENT_CONFIRMED';
 
-export type UserRole = 'MANAGER' | 'HR_ADMIN' | 'COST_CENTRE_OWNER' | 'VENDOR' | 'APPLICANT' | 'EVP';
+export type UserRole = 'ADMIN' | 'EMPLOYEE' | 'MANAGER' | 'HRBP' | 'EXECUTIVE' | 'FINANCE' | 'VENDOR';
 
 export interface AppUser {
   id: string;
@@ -51,7 +51,7 @@ export interface WorkflowEvent {
   fromStatus: VisaRequestStatus | null;
   toStatus: VisaRequestStatus;
   performedBy: string;
-  performedByRole: UserRole;
+  performedByRole: string;
   timestamp: string;
   comments?: string;
 }

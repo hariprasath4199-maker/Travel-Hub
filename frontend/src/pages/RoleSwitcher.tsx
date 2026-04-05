@@ -2,22 +2,24 @@ import { User, Shield, CheckCircle, Mail, Loader2 } from 'lucide-react';
 import { useUserRole } from '@/src/context/UserRoleContext';
 import { ROLE_LABELS, type UserRole } from '@/src/visaApi';
 
-const ROLE_COLORS: Record<UserRole, string> = {
-  MANAGER: 'bg-blue-100 text-blue-800',
-  HR_ADMIN: 'bg-purple-100 text-purple-800',
-  COST_CENTRE_OWNER: 'bg-amber-100 text-amber-800',
-  VENDOR: 'bg-orange-100 text-orange-800',
-  APPLICANT: 'bg-cyan-100 text-cyan-800',
-  EVP: 'bg-emerald-100 text-emerald-800',
+const ROLE_COLORS: Record<string, string> = {
+  ADMIN: 'bg-red-100 text-red-800',
+  EMPLOYEE: 'bg-sky-100 text-sky-800',
+  MANAGER: 'bg-purple-100 text-purple-800',
+  HRBP: 'bg-emerald-100 text-emerald-800',
+  EXECUTIVE: 'bg-indigo-100 text-indigo-800',
+  FINANCE: 'bg-amber-100 text-amber-800',
+  VENDOR: 'bg-pink-100 text-pink-800',
 };
 
-const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
-  MANAGER: 'Submits visa requests on behalf of employees and monitors progress.',
-  HR_ADMIN: 'Manages the full workflow: cost proposals, vendor coordination, and approvals.',
-  COST_CENTRE_OWNER: 'Reviews and approves or rejects cost proposals for visa requests.',
-  VENDOR: 'Provides available appointment dates and confirms bookings.',
-  APPLICANT: 'Selects preferred appointment dates from vendor availability.',
-  EVP: 'Provides final executive approval for visa requests.',
+const ROLE_DESCRIPTIONS: Record<string, string> = {
+  ADMIN: 'Full access to all features including administration, user management, and system settings.',
+  EMPLOYEE: 'Create travel/visa requests and view only your own requests and status updates.',
+  MANAGER: 'Create requests on behalf of employees and monitor your reportees\' travel data.',
+  HRBP: 'Full access to all workflows, cost proposals, vendor coordination, and approvals.',
+  EXECUTIVE: 'Full visibility and executive approval authority across all travel requests.',
+  FINANCE: 'Read-only access to all travel data, cost reports, and financial summaries.',
+  VENDOR: 'Access to vendor-specific workflow steps: itineraries, bookings, and appointments.',
 };
 
 export default function RoleSwitcher() {
@@ -33,7 +35,6 @@ export default function RoleSwitcher() {
 
   return (
     <div className="p-10 max-w-[1000px] mx-auto space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-on-surface">Role Switcher</h1>
         <p className="text-sm text-on-surface-variant mt-1">
@@ -41,19 +42,11 @@ export default function RoleSwitcher() {
         </p>
       </div>
 
-      {/* Current Role Banner */}
       {currentUser && (
         <div className="bg-primary/5 border border-primary/15 rounded-2xl p-6 flex items-center gap-5">
           <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
             {currentUser.avatar ? (
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-16 h-16 rounded-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
+              <img src={currentUser.avatar} alt={currentUser.name} className="w-16 h-16 rounded-full object-cover" />
             ) : (
               <User size={28} />
             )}
@@ -63,13 +56,12 @@ export default function RoleSwitcher() {
             <p className="text-xl font-bold text-on-surface">{currentUser.name}</p>
             <p className="text-sm text-on-surface-variant">{currentUser.email}</p>
           </div>
-          <span className={`px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider ${ROLE_COLORS[currentUser.role]}`}>
-            {ROLE_LABELS[currentUser.role]}
+          <span className={`px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider ${ROLE_COLORS[currentUser.role] || 'bg-gray-100 text-gray-800'}`}>
+            {ROLE_LABELS[currentUser.role] || currentUser.role}
           </span>
         </div>
       )}
 
-      {/* Role Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {allUsers.map((user) => {
           const isActive = currentUser?.role === user.role;
@@ -89,14 +81,7 @@ export default function RoleSwitcher() {
                     isActive ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'
                   }`}>
                     {user.avatar ? (
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6750A4&color=fff&size=48`;
-                        }}
-                      />
+                      <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
                     ) : (
                       <User size={20} />
                     )}
@@ -109,27 +94,24 @@ export default function RoleSwitcher() {
                     </div>
                   </div>
                 </div>
-                {isActive && (
-                  <CheckCircle size={20} className="text-primary" />
-                )}
+                {isActive && <CheckCircle size={20} className="text-primary" />}
               </div>
 
               <div className="flex items-center gap-2 mb-2">
                 <Shield size={14} className="text-on-surface-variant" />
-                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${ROLE_COLORS[user.role]}`}>
-                  {ROLE_LABELS[user.role]}
+                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${ROLE_COLORS[user.role] || 'bg-gray-100 text-gray-800'}`}>
+                  {ROLE_LABELS[user.role as UserRole] || user.role}
                 </span>
               </div>
 
               <p className="text-xs text-on-surface-variant leading-relaxed">
-                {ROLE_DESCRIPTIONS[user.role]}
+                {ROLE_DESCRIPTIONS[user.role] || 'No description available.'}
               </p>
             </button>
           );
         })}
       </div>
 
-      {/* Info Box */}
       <div className="bg-surface-container-low rounded-2xl p-6 text-center">
         <p className="text-xs text-on-surface-variant">
           Role switching is for demonstration purposes. Your selected role persists across page reloads via local storage.

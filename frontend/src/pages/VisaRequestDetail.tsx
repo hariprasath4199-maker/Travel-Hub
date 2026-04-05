@@ -93,7 +93,7 @@ function StepActionPanel({
   let panel: React.ReactNode = null;
 
   // Step 1: HR receives submission -> creates cost proposal
-  if (status === 'SUBMITTED_TO_HR' && role === 'HR_ADMIN') {
+  if (status === 'SUBMITTED_TO_HR' && ( role === 'HRBP' || role === 'ADMIN' )) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">Create Cost Proposal</h4>
@@ -117,7 +117,7 @@ function StepActionPanel({
   }
 
   // Step 2: HR sends cost proposal to cost centre owner
-  if (status === 'COST_PROPOSAL_SHARED' && role === 'HR_ADMIN') {
+  if (status === 'COST_PROPOSAL_SHARED' && ( role === 'HRBP' || role === 'ADMIN' )) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">Send for Cost Centre Approval</h4>
@@ -139,7 +139,7 @@ function StepActionPanel({
   }
 
   // Step 3: Cost Centre Owner decides
-  if (status === 'PENDING_COST_CENTRE_APPROVAL' && role === 'COST_CENTRE_OWNER') {
+  if (status === 'PENDING_COST_CENTRE_APPROVAL' && ( role === 'MANAGER' || role === 'ADMIN' )) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">Cost Centre Decision</h4>
@@ -165,7 +165,7 @@ function StepActionPanel({
   }
 
   // Step 4: HR sends vendor request
-  if (status === 'COST_CENTRE_APPROVED' && role === 'HR_ADMIN') {
+  if (status === 'COST_CENTRE_APPROVED' && ( role === 'HRBP' || role === 'ADMIN' )) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">Request Vendor Availability</h4>
@@ -208,7 +208,7 @@ function StepActionPanel({
   }
 
   // Step 6: HR shares dates with applicant
-  if (status === 'VENDOR_DATES_RECEIVED' && role === 'HR_ADMIN') {
+  if (status === 'VENDOR_DATES_RECEIVED' && ( role === 'HRBP' || role === 'ADMIN' )) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">Share Dates with Applicant</h4>
@@ -232,7 +232,7 @@ function StepActionPanel({
   }
 
   // Step 7: Applicant selects dates
-  if (status === 'AWAITING_APPLICANT_DATE_SELECTION' && role === 'APPLICANT') {
+  if (status === 'AWAITING_APPLICANT_DATE_SELECTION' && ( role === 'EMPLOYEE' || role === 'ADMIN' )) {
     const available = request.vendorAvailableDates || [];
     panel = (
       <div className="space-y-4">
@@ -260,7 +260,7 @@ function StepActionPanel({
   }
 
   // Step 8: HR sends EVP approval, or EVP decides
-  if (status === 'APPLICANT_DATES_SUBMITTED' && role === 'HR_ADMIN') {
+  if (status === 'APPLICANT_DATES_SUBMITTED' && ( role === 'HRBP' || role === 'ADMIN' )) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">Send for EVP Approval</h4>
@@ -281,7 +281,7 @@ function StepActionPanel({
     );
   }
 
-  if (status === 'PENDING_EVP_APPROVAL' && role === 'EVP') {
+  if (status === 'PENDING_EVP_APPROVAL' && ( role === 'EXECUTIVE' || role === 'ADMIN' )) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">EVP Decision</h4>
@@ -301,7 +301,7 @@ function StepActionPanel({
   }
 
   // Step 9: Confirm booking / appointment
-  if (status === 'EVP_APPROVED' && role === 'HR_ADMIN') {
+  if (status === 'EVP_APPROVED' && ( role === 'HRBP' || role === 'ADMIN' )) {
     const selectedDates = request.applicantSelectedDates || [];
     panel = (
       <div className="space-y-4">
@@ -324,7 +324,7 @@ function StepActionPanel({
     );
   }
 
-  if (status === 'DATE_BLOCKING_REQUESTED' && (role === 'VENDOR' || role === 'HR_ADMIN')) {
+  if (status === 'DATE_BLOCKING_REQUESTED' && (role === 'VENDOR' || ( role === 'HRBP' || role === 'ADMIN' ))) {
     panel = (
       <div className="space-y-4">
         <h4 className="text-lg font-bold">Confirm Appointment</h4>

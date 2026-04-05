@@ -18,15 +18,15 @@ export interface StepActionPanelProps {
 }
 
 const STEP_ROLE_MAP: Record<number, string[]> = {
-  1: ['MANAGER'],
-  2: ['HR_ADMIN'],
-  3: ['HR_ADMIN', 'COST_CENTRE_OWNER'],
-  4: ['HR_ADMIN'],
+  1: ['MANAGER', 'EMPLOYEE', 'ADMIN'],
+  2: ['HRBP', 'ADMIN'],
+  3: ['HRBP', 'MANAGER', 'ADMIN'],
+  4: ['HRBP', 'ADMIN'],
   5: ['VENDOR'],
-  6: ['HR_ADMIN'],
-  7: ['APPLICANT'],
-  8: ['HR_ADMIN', 'EVP'],
-  9: ['HR_ADMIN', 'VENDOR'],
+  6: ['HRBP', 'ADMIN'],
+  7: ['EMPLOYEE', 'ADMIN'],
+  8: ['HRBP', 'EXECUTIVE', 'ADMIN'],
+  9: ['HRBP', 'VENDOR', 'ADMIN'],
 };
 
 const STEP_COMPONENTS: Record<number, React.ComponentType<StepActionPanelProps>> = {

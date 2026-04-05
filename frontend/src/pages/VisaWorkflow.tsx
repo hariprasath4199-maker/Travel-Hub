@@ -4,7 +4,7 @@ import { Loader2, ArrowRight, Plus, FileText, Search, Filter } from 'lucide-reac
 import { fetchVisaRequests, STEP_LABELS, STATUS_LABELS, ROLE_LABELS, type VisaRequest, type VisaRequestStatus } from '@/src/visaApi';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { useUserRole } from '@/src/context/UserRoleContext';
-import { filterVisaRequestsByRole, ROLE_VIEW_INFO } from '@/src/utils/roleFilter';
+import { filterVisaRequestsByRole, ROLE_VIEW_INFO, canCreateRequest } from '@/src/utils/roleFilter';
 
 type FilterTab = 'all' | 'active' | 'confirmed' | 'rejected';
 
@@ -113,13 +113,15 @@ export default function VisaWorkflow() {
             {filtered.length} request{filtered.length !== 1 ? 's' : ''} visible to you
           </p>
         </div>
-        <Link
-          to="/visa-requests/new"
-          className="bg-primary text-on-primary rounded-xl font-bold px-6 py-3 shadow-lg shadow-primary/20 hover:bg-primary-dim transition-all active:scale-95 flex items-center gap-2"
-        >
-          <Plus size={18} />
-          New Visa Request
-        </Link>
+        {currentUser && canCreateRequest(currentUser.role) && (
+          <Link
+            to="/visa-requests/new"
+            className="bg-primary text-on-primary rounded-xl font-bold px-6 py-3 shadow-lg shadow-primary/20 hover:bg-primary-dim transition-all active:scale-95 flex items-center gap-2"
+          >
+            <Plus size={18} />
+            New Visa Request
+          </Link>
+        )}
       </div>
 
       {/* Filter Tabs + Search */}

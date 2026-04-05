@@ -6,6 +6,11 @@ interface TopBarProps {
   onMenuClick: () => void;
 }
 
+const ROLE_SHORT: Record<string, string> = {
+  ADMIN: 'ADM', EMPLOYEE: 'EMP', MANAGER: 'MGR', HRBP: 'HR',
+  EXECUTIVE: 'EXEC', FINANCE: 'FIN', VENDOR: 'VND',
+};
+
 export function TopBar({ onMenuClick }: TopBarProps) {
   const { currentUser, allUsers, switchRole } = useUserRole();
 
@@ -22,10 +27,10 @@ export function TopBar({ onMenuClick }: TopBarProps) {
         <div className="relative group">
           <button className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-primary/20 transition-colors">
             <span className="hidden sm:inline">{currentUser ? ROLE_LABELS[currentUser.role] : 'Loading...'}</span>
-            <span className="sm:hidden text-[10px]">{currentUser ? ({ MANAGER: 'MGR', HR_ADMIN: 'HR', COST_CENTRE_OWNER: 'CCO', VENDOR: 'VND', APPLICANT: 'APP', EVP: 'EVP' }[currentUser.role] || currentUser.role.slice(0, 3)) : '...'}</span>
+            <span className="sm:hidden text-[10px]">{currentUser ? (ROLE_SHORT[currentUser.role] || currentUser.role.slice(0, 3)) : '...'}</span>
             <ChevronDown size={14} />
           </button>
-          <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-surface-container p-2 min-w-48 hidden group-hover:block z-50">
+          <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-surface-container p-2 min-w-52 hidden group-hover:block z-50">
             <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold px-3 py-1.5">Switch Role</p>
             {allUsers.map(u => (
               <button
@@ -36,7 +41,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
                 <img src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full" />
                 <div>
                   <p className="text-sm font-medium leading-none">{u.name}</p>
-                  <p className="text-[10px] text-on-surface-variant">{ROLE_LABELS[u.role as UserRole]}</p>
+                  <p className="text-[10px] text-on-surface-variant">{ROLE_LABELS[u.role as UserRole] || u.role}</p>
                 </div>
               </button>
             ))}

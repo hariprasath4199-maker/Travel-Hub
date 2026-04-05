@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, Database, Users, BarChart3, Settings, PlaneTakeoff, FileCheck, Plane, X
+  LayoutDashboard, Database, Users, BarChart3, Settings, PlaneTakeoff, FileCheck, Plane, X, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { useUserRole } from '@/src/context/UserRoleContext';
+import { canAccessNav, type NavItem } from '@/src/utils/roleFilter';
 
 interface SidebarProps {
   open: boolean;
@@ -10,15 +12,23 @@ interface SidebarProps {
 }
 
 export function Sidebar({ open, onClose }: SidebarProps) {
-  const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', to: '/' },
-    { icon: FileCheck, label: 'Visa Workflow', to: '/visa-requests' },
-    { icon: Plane, label: 'Ticket Booking', to: '/ticket-bookings' },
-    { icon: Database, label: 'Requests', to: '/requests' },
-    { icon: Users, label: 'Travelers', to: '/travelers' },
-    { icon: BarChart3, label: 'Reports', to: '/reports' },
-    { icon: Settings, label: 'Settings', to: '/settings' },
+  const { currentUser } = useUserRole();
+  const role = currentUser?.role;
+
+  const allNavItems: { icon: any; label: string; to: string; navKey: NavItem }[] = [
+    { icon: LayoutDashboard, label: 'Dashboard', to: '/', navKey: 'dashboard' },
+    { icon: FileCheck, label: 'Visa Workflow', to: '/visa-requests', navKey: 'visa-requests' },
+    { icon: Plane, label: 'Ticket Booking', to: '/ticket-bookings', navKey: 'ticket-bookings' },
+    { icon: Database, label: 'Requests', to: '/requests', navKey: 'requests' },
+    { icon: Users, label: 'Travelers', to: '/travelers', navKey: 'travelers' },
+    { icon: BarChart3, label: 'Reports', to: '/reports', navKey: 'reports' },
+    { icon: ShieldCheck, label: 'Admin', to: '/admin', navKey: 'admin' },
+    { icon: Settings, label: 'Settings', to: '/settings', navKey: 'settings' },
   ];
+
+  const navItems = role
+    ? allNavItems.filter(item => canAccessNav(role, item.navKey))
+    : allNavItems.filter(item => item.navKey !== 'admin');
 
   return (
     <>
@@ -60,7 +70,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 font-headline text-sm font-medium active:scale-95",
                 isActive
                   ? "text-primary bg-white shadow-sm font-semibold"
-                  : "text-slate-500 hover:bg-slate-200"
+                  : "text-slate-500 hover:bg-slate-200",
+                item.navKey === 'admin' && "text-red-600 hover:text-red-700",
+                item.navKey === 'admin' && isActive && "text-red-700 bg-red-50",
               )}
             >
               <item.icon size={20} />

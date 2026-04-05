@@ -7,21 +7,32 @@ interface RoleBadgeProps {
 }
 
 const ROLE_STYLES: Record<string, string> = {
-  HR_ADMIN: 'bg-blue-100 text-blue-800',
+  ADMIN: 'bg-red-100 text-red-800',
+  EMPLOYEE: 'bg-sky-100 text-sky-800',
   MANAGER: 'bg-purple-100 text-purple-800',
+  HRBP: 'bg-emerald-100 text-emerald-800',
+  EXECUTIVE: 'bg-indigo-100 text-indigo-800',
+  FINANCE: 'bg-amber-100 text-amber-800',
+  VENDOR: 'bg-pink-100 text-pink-800',
+  // Legacy roles for workflow history display
+  HR_ADMIN: 'bg-emerald-100 text-emerald-800',
   COST_CENTRE_OWNER: 'bg-amber-100 text-amber-800',
-  VENDOR: 'bg-orange-100 text-orange-800',
-  APPLICANT: 'bg-cyan-100 text-cyan-800',
-  EVP: 'bg-emerald-100 text-emerald-800',
+  APPLICANT: 'bg-sky-100 text-sky-800',
+  EVP: 'bg-indigo-100 text-indigo-800',
 };
 
 const ROLE_SHORT_LABELS: Record<string, string> = {
-  HR_ADMIN: 'HR',
+  ADMIN: 'ADM',
+  EMPLOYEE: 'EMP',
   MANAGER: 'MGR',
-  COST_CENTRE_OWNER: 'CCO',
+  HRBP: 'HR',
+  EXECUTIVE: 'EXEC',
+  FINANCE: 'FIN',
   VENDOR: 'VND',
-  APPLICANT: 'APP',
-  EVP: 'EVP',
+  HR_ADMIN: 'HR',
+  COST_CENTRE_OWNER: 'CCO',
+  APPLICANT: 'EMP',
+  EVP: 'EXEC',
 };
 
 export function RoleBadge({ role, className }: RoleBadgeProps) {

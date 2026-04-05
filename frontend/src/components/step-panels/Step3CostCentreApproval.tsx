@@ -11,8 +11,8 @@ export default function Step3CostCentreApproval({ request, currentUser, onAction
   const [ccOwnerEmail, setCcOwnerEmail] = useState(request.costCentreOwnerEmail ?? '');
 
   const costProposal = request.costProposal;
-  const isHrAdmin = currentUser.role === 'HR_ADMIN';
-  const isCostCentreOwner = currentUser.role === 'COST_CENTRE_OWNER';
+  const isHrAdmin = currentUser.role === 'HRBP' || currentUser.role === 'ADMIN';
+  const isCostCentreOwner = currentUser.role === 'MANAGER' || currentUser.role === 'ADMIN';
 
   const handleSendForApproval = async () => {
     if (!ccOwnerName.trim() || !ccOwnerEmail.trim()) return;

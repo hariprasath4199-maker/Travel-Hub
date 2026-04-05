@@ -223,7 +223,7 @@ export default function TicketBookingDetail() {
           </div>
 
           {/* Step 1: Ticket Request — Info only for Manager/Applicant */}
-          {booking.currentStep === 1 && (role === 'APPLICANT' || role === 'MANAGER') && booking.status === 'TICKET_REQUESTED' && (
+          {booking.currentStep === 1 && (role === 'EMPLOYEE' || role === 'MANAGER') && booking.status === 'TICKET_REQUESTED' && (
             <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6">
               <h2 className="text-lg font-bold text-on-surface mb-4">Step 1: Ticket Requested</h2>
               <p className="text-on-surface-variant text-sm">Your ticket request has been submitted. Waiting for HR Admin to request itinerary from the vendor.</p>
@@ -231,7 +231,7 @@ export default function TicketBookingDetail() {
           )}
 
           {/* Step 2: Request Itinerary */}
-          {booking.currentStep >= 1 && role === 'HR_ADMIN' && booking.status === 'TICKET_REQUESTED' && (
+          {booking.currentStep >= 1 && (role === 'HRBP' || role === 'ADMIN') && booking.status === 'TICKET_REQUESTED' && (
             <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6">
               <h2 className="text-lg font-bold text-on-surface mb-4">Step 2: Request Itinerary from Vendor</h2>
               <p className="text-on-surface-variant text-sm mb-4">Send itinerary request to the travel vendor</p>
@@ -256,7 +256,7 @@ export default function TicketBookingDetail() {
           )}
 
           {/* Step 4: Share Itinerary & EVP Approval */}
-          {booking.currentStep >= 3 && booking.status === 'ITINERARY_PROVIDED' && role === 'HR_ADMIN' && (
+          {booking.currentStep >= 3 && booking.status === 'ITINERARY_PROVIDED' && (role === 'HRBP' || role === 'ADMIN') && (
             <ShareItineraryPanel
               booking={booking}
               submitting={submitting}
@@ -265,7 +265,7 @@ export default function TicketBookingDetail() {
           )}
 
           {/* Step 4B: EVP Approval */}
-          {booking.currentStep >= 4 && booking.status === 'EVP_APPROVAL_PENDING' && role === 'EVP' && (
+          {booking.currentStep >= 4 && booking.status === 'EVP_APPROVAL_PENDING' && (role === 'EXECUTIVE' || role === 'ADMIN') && (
             <EvpApprovalPanel
               booking={booking}
               submitting={submitting}
@@ -274,7 +274,7 @@ export default function TicketBookingDetail() {
           )}
 
           {/* Step 5: Request Booking */}
-          {booking.currentStep >= 5 && role === 'HR_ADMIN' && booking.status === 'EVP_APPROVED' && (
+          {booking.currentStep >= 5 && (role === 'HRBP' || role === 'ADMIN') && booking.status === 'EVP_APPROVED' && (
             <RequestBookingPanel
               booking={booking}
               submitting={submitting}
@@ -292,7 +292,7 @@ export default function TicketBookingDetail() {
           )}
 
           {/* Step 6B: HR Shares Ticket */}
-          {booking.currentStep >= 6 && role === 'HR_ADMIN' && booking.status === 'TICKET_BOOKED' && (
+          {booking.currentStep >= 6 && (role === 'HRBP' || role === 'ADMIN') && booking.status === 'TICKET_BOOKED' && (
             <ShareTicketPanel
               booking={booking}
               submitting={submitting}

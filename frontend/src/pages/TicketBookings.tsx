@@ -5,7 +5,7 @@ import { fetchTicketBookings, STEP_LABELS, STATUS_LABELS, type TicketBooking, ty
 import { ROLE_LABELS, fetchVisaRequests, type VisaRequest } from '@/src/visaApi';
 import { StatusBadge } from '@/src/components/StatusBadge';
 import { useUserRole } from '@/src/context/UserRoleContext';
-import { filterTicketBookings, ROLE_VIEW_INFO } from '@/src/utils/roleFilter';
+import { filterTicketBookings, ROLE_VIEW_INFO, canCreateRequest } from '@/src/utils/roleFilter';
 
 type FilterTab = 'all' | 'active' | 'completed' | 'rejected';
 
@@ -115,13 +115,15 @@ export default function TicketBookings() {
             {filtered.length} booking{filtered.length !== 1 ? 's' : ''} visible to you
           </p>
         </div>
-        <Link
-          to="/ticket-bookings/new"
-          className="bg-primary text-on-primary rounded-xl font-bold px-6 py-3 shadow-lg shadow-primary/20 hover:bg-primary-dim transition-all active:scale-95 flex items-center gap-2"
-        >
-          <Plus size={18} />
-          New Ticket Request
-        </Link>
+        {currentUser && canCreateRequest(currentUser.role) && (
+          <Link
+            to="/ticket-bookings/new"
+            className="bg-primary text-on-primary rounded-xl font-bold px-6 py-3 shadow-lg shadow-primary/20 hover:bg-primary-dim transition-all active:scale-95 flex items-center gap-2"
+          >
+            <Plus size={18} />
+            New Ticket Request
+          </Link>
+        )}
       </div>
 
       {/* Filter Tabs + Search */}

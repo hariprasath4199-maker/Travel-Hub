@@ -235,6 +235,11 @@ app.get('/api/stats', (_req, res) => {
   });
 });
 
+// ==================== ADMIN API ====================
+
+app.get('/api/admin/audit-logs', (_req, res) => { res.json(readJsonFile(path.join(OUTPUT_DIR, 'audit_log.txt'))); });
+app.get('/api/admin/email-logs', (_req, res) => { res.json(readJsonFile(path.join(OUTPUT_DIR, 'email_log.txt'))); });
+
 // JSON 404 handler for unknown API routes
 app.use('/api', (_req, res) => {
   res.status(404).json({ error: 'Not found', message: `Route not found` });

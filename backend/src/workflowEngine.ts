@@ -19,21 +19,21 @@ export const VALID_TRANSITIONS: Record<VisaRequestStatus, VisaRequestStatus[]> =
 };
 
 // Which roles can trigger each target status
-export const TRANSITION_PERMISSIONS: Record<VisaRequestStatus, UserRole[]> = {
-  'SUBMITTED_TO_HR': ['MANAGER'],
-  'COST_PROPOSAL_SHARED': ['HR_ADMIN'],
-  'PENDING_COST_CENTRE_APPROVAL': ['HR_ADMIN'],
-  'COST_CENTRE_APPROVED': ['COST_CENTRE_OWNER'],
-  'COST_CENTRE_REJECTED': ['COST_CENTRE_OWNER'],
-  'AWAITING_VENDOR_AVAILABILITY': ['HR_ADMIN'],
+export const TRANSITION_PERMISSIONS: Record<VisaRequestStatus, string[]> = {
+  'SUBMITTED_TO_HR': ['MANAGER', 'EMPLOYEE', 'ADMIN'],
+  'COST_PROPOSAL_SHARED': ['HRBP', 'ADMIN'],
+  'PENDING_COST_CENTRE_APPROVAL': ['HRBP', 'ADMIN'],
+  'COST_CENTRE_APPROVED': ['MANAGER', 'ADMIN', 'COST_CENTRE_OWNER'],
+  'COST_CENTRE_REJECTED': ['MANAGER', 'ADMIN', 'COST_CENTRE_OWNER'],
+  'AWAITING_VENDOR_AVAILABILITY': ['HRBP', 'ADMIN'],
   'VENDOR_DATES_RECEIVED': ['VENDOR'],
-  'AWAITING_APPLICANT_DATE_SELECTION': ['HR_ADMIN'],
-  'APPLICANT_DATES_SUBMITTED': ['APPLICANT'],
-  'PENDING_EVP_APPROVAL': ['HR_ADMIN'],
-  'EVP_APPROVED': ['EVP'],
-  'EVP_REJECTED': ['EVP'],
-  'DATE_BLOCKING_REQUESTED': ['HR_ADMIN'],
-  'APPOINTMENT_CONFIRMED': ['HR_ADMIN', 'VENDOR'],
+  'AWAITING_APPLICANT_DATE_SELECTION': ['HRBP', 'ADMIN'],
+  'APPLICANT_DATES_SUBMITTED': ['EMPLOYEE', 'ADMIN', 'APPLICANT'],
+  'PENDING_EVP_APPROVAL': ['HRBP', 'ADMIN'],
+  'EVP_APPROVED': ['EXECUTIVE', 'ADMIN', 'EVP'],
+  'EVP_REJECTED': ['EXECUTIVE', 'ADMIN', 'EVP'],
+  'DATE_BLOCKING_REQUESTED': ['HRBP', 'ADMIN'],
+  'APPOINTMENT_CONFIRMED': ['HRBP', 'VENDOR', 'ADMIN'],
 };
 
 // Map status to step number
@@ -70,7 +70,7 @@ export const STEP_LABELS: Record<number, string> = {
 export function validateTransition(
   currentStatus: VisaRequestStatus,
   targetStatus: VisaRequestStatus,
-  userRole: UserRole
+  userRole: string
 ): { valid: boolean; error?: string } {
   const allowed = VALID_TRANSITIONS[currentStatus];
   if (!allowed || !allowed.includes(targetStatus)) {
@@ -89,7 +89,7 @@ export function getStepForStatus(status: VisaRequestStatus): number {
   return STATUS_TO_STEP[status] || 1;
 }
 
-export function getAvailableActions(status: VisaRequestStatus, role: UserRole): VisaRequestStatus[] {
+export function getAvailableActions(status: VisaRequestStatus, role: string): VisaRequestStatus[] {
   const nextStatuses = VALID_TRANSITIONS[status] || [];
   return nextStatuses.filter(s => TRANSITION_PERMISSIONS[s]?.includes(role));
 }

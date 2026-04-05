@@ -8,7 +8,7 @@ export default function Step9ConfirmBooking({ request, currentUser, onActionComp
   const [error, setError] = useState('');
   const [confirmationRef, setConfirmationRef] = useState(request.vendorConfirmationReference ?? '');
 
-  const isHrAdmin = currentUser.role === 'HR_ADMIN';
+  const isHrAdmin = currentUser.role === 'HRBP' || currentUser.role === 'ADMIN';
   const isVendor = currentUser.role === 'VENDOR';
   const isAppointmentConfirmed = request.status === 'APPOINTMENT_CONFIRMED';
   const isDateBlocking = request.status === 'DATE_BLOCKING_REQUESTED';

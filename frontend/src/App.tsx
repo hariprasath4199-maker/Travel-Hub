@@ -13,6 +13,7 @@ import NewTicketBooking from './pages/NewTicketBooking';
 import TicketBookingDetail from './pages/TicketBookingDetail';
 import ActionPage from './pages/ActionPage';
 import RoleSwitcher from './pages/RoleSwitcher';
+import Admin from './pages/Admin';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
 
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="requests/:id" element={<RequestDetail />} />
           <Route path="travelers" element={<Travelers />} />
           <Route path="reports" element={<PlaceholderPage title="Reports" />} />
+          <Route path="admin" element={<Admin />} />
           <Route path="settings" element={<RoleSwitcher />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
