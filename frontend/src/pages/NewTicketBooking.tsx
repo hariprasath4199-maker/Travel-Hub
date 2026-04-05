@@ -7,7 +7,8 @@ import {
 import { createTicketBooking } from '@/src/ticketApi';
 import { useUserRole } from '@/src/context/UserRoleContext';
 import { CountryCodePicker } from '@/src/components/CountryCodePicker';
-import { fetchLocations, type Location } from '@/src/masterDataApi';
+import { fetchLocations, fetchEmployees, type Location, type Employee } from '@/src/masterDataApi';
+import { FileUpload } from '@/src/components/FileUpload';
 
 export default function NewTicketBooking() {
   const navigate = useNavigate();
@@ -16,16 +17,20 @@ export default function NewTicketBooking() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
 
   const visaRequestId = searchParams.get('visaRequestId') || '';
 
   useEffect(() => {
-    fetchLocations().then(setLocations).catch(() => {});
+    Promise.all([fetchLocations(), fetchEmployees()])
+      .then(([loc, emp]) => { setLocations(loc); setEmployees(emp); })
+      .catch(() => {});
   }, []);
 
   const [formData, setFormData] = useState({
     employeeId: '',
-    applicantName: '',
+    firstName: '',
+    lastName: '',
     applicantEmail: '',
     applicantMobile: '',
     managerName: currentUser?.name || '',
@@ -35,6 +40,7 @@ export default function NewTicketBooking() {
     travelStartDate: '',
     travelEndDate: '',
     purpose: '',
+    attachments: [] as string[],
     visaRequestId,
   });
 
@@ -42,6 +48,20 @@ export default function NewTicketBooking() {
     const { name, value } = e.target;
     setFormData((prev) => {
       const next = { ...prev, [name]: value };
+      if (name === 'employeeId') {
+        const emp = employees.find(e => e.employeeId === value);
+        if (emp) {
+          next.firstName = emp.firstName;
+          next.lastName = emp.lastName;
+          next.applicantEmail = emp.email;
+          next.applicantMobile = emp.mobile || '';
+        } else {
+          next.firstName = '';
+          next.lastName = '';
+          next.applicantEmail = '';
+          next.applicantMobile = '';
+        }
+      }
       if (name === 'locationId') {
         const loc = locations.find(l => l.id === value);
         if (loc) next.destination = `${loc.city}, ${loc.country}`;
@@ -56,7 +76,10 @@ export default function NewTicketBooking() {
     setError(null);
 
     try {
-      const created = await createTicketBooking(formData);
+      const created = await createTicketBooking({
+        ...formData,
+        applicantName: `${formData.firstName} ${formData.lastName}`.trim(),
+      });
       navigate(`/ticket-bookings/${created.id}`);
     } catch (err: any) {
       setError(err.message || 'Failed to create booking');
@@ -65,6 +88,7 @@ export default function NewTicketBooking() {
   };
 
   const inputCls = 'w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none transition-all';
+  const readOnlyCls = `${inputCls} opacity-70 cursor-not-allowed bg-surface-container`;
   const labelCls = 'text-sm font-bold text-on-surface-variant flex items-center gap-2';
 
   return (
@@ -95,17 +119,21 @@ export default function NewTicketBooking() {
           <div>
             <h2 className="text-lg font-bold text-on-surface mb-4">Applicant Information</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="space-y-2 md:col-span-2">
                 <label className={labelCls}><Hash size={16} /> Employee ID *</label>
-                <input type="text" name="employeeId" value={formData.employeeId} onChange={handleChange} required className={inputCls} />
+                <input required type="text" name="employeeId" value={formData.employeeId} onChange={handleChange} className={inputCls} />
               </div>
               <div className="space-y-2">
-                <label className={labelCls}><User size={16} /> Applicant Name *</label>
-                <input type="text" name="applicantName" value={formData.applicantName} onChange={handleChange} required className={inputCls} />
+                <label className={labelCls}><User size={16} /> First Name</label>
+                <input type="text" name="firstName" value={formData.firstName} readOnly className={readOnlyCls} />
               </div>
               <div className="space-y-2">
-                <label className={labelCls}><Mail size={16} /> Applicant Email *</label>
-                <input type="email" name="applicantEmail" value={formData.applicantEmail} onChange={handleChange} required className={inputCls} />
+                <label className={labelCls}><User size={16} /> Last Name</label>
+                <input type="text" name="lastName" value={formData.lastName} readOnly className={readOnlyCls} />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className={labelCls}><Mail size={16} /> Email</label>
+                <input type="email" name="applicantEmail" value={formData.applicantEmail} readOnly className={readOnlyCls} />
               </div>
             </div>
             <div className="mt-4 space-y-2 relative">
@@ -148,7 +176,7 @@ export default function NewTicketBooking() {
                 </div>
                 <div className="space-y-2">
                   <label className={labelCls}><Globe size={16} /> Destination</label>
-                  <input type="text" name="destination" value={formData.destination} readOnly className={`${inputCls} opacity-70 cursor-not-allowed`} />
+                  <input type="text" name="destination" value={formData.destination} readOnly className={readOnlyCls} />
                 </div>
               </div>
 
@@ -180,6 +208,12 @@ export default function NewTicketBooking() {
               </div>
             </div>
           )}
+
+          {/* Attachments */}
+          <div>
+            <h2 className="text-lg font-bold text-on-surface mb-4">Supporting Documents</h2>
+            <FileUpload label="Attachments" onUploadComplete={(filenames) => setFormData(prev => ({ ...prev, attachments: filenames }))} />
+          </div>
 
           {/* Action Buttons */}
           <div className="flex gap-4 justify-end pt-6 border-t border-outline-variant/10">

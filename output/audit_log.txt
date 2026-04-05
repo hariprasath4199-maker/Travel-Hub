@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "action": "VISA_REQUEST_CREATED",
+    "requestId": "VISA-5001",
+    "timestamp": "2026-04-05T12:41:58.139Z",
+    "details": "Visa request by Gopinath Subramani to Sweden"
+  },
+  {
+    "action": "TICKET_BOOKING_CREATED",
+    "requestId": "TB-5001",
+    "timestamp": "2026-04-05T12:43:18.775Z",
+    "details": "Ticket booking for Marcus Weber to Oslo, Norway"
+  }
+]

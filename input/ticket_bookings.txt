@@ -1,1 +1,39 @@
-[]
+[
+  {
+    "id": "TB-5001",
+    "referenceNumber": "TK-05001",
+    "employeeId": "EMP-1005",
+    "firstName": "Marcus",
+    "lastName": "Weber",
+    "applicantEmail": "marcus.weber@zalaris.com",
+    "applicantMobile": "+49 151 5678901",
+    "managerName": "Gopinath Subramani",
+    "managerEmail": "gopinath@zalaris.com",
+    "locationId": "LOC-002",
+    "destination": "Oslo, Norway",
+    "travelStartDate": "2026-06-01",
+    "travelEndDate": "2026-06-10",
+    "purpose": "Client onboarding meetings in Oslo",
+    "attachments": [],
+    "visaRequestId": "",
+    "applicantName": "Marcus Weber",
+    "status": "TICKET_REQUESTED",
+    "currentStep": 1,
+    "itineraryOptions": [],
+    "workflowHistory": [
+      {
+        "id": "a8c524ba-f8dc-4b68-ba4f-1e07a7cc3ba4",
+        "step": 1,
+        "action": "Ticket booking request submitted",
+        "fromStatus": null,
+        "toStatus": "TICKET_REQUESTED",
+        "performedBy": "Gopinath Subramani",
+        "performedByRole": "MANAGER",
+        "timestamp": "2026-04-05T12:43:18.774Z"
+      }
+    ],
+    "emailLog": [],
+    "createdAt": "2026-04-05T12:43:18.774Z",
+    "updatedAt": "2026-04-05T12:43:18.774Z"
+  }
+]

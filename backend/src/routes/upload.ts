@@ -16,16 +16,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB per file
   fileFilter: (_req, file, cb) => {
-    const allowed = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+    const allowed = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.xlsx', '.xls'];
     const ext = path.extname(file.originalname).toLowerCase();
     if (allowed.includes(ext)) cb(null, true);
     else cb(new Error(`File type ${ext} not allowed`));
   },
 });
 
-// POST /api/upload
+// POST /api/upload — single file (backward compatible)
 router.post('/', upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   res.json({
@@ -35,7 +35,18 @@ router.post('/', upload.single('file'), (req, res) => {
   });
 });
 
-// GET /api/uploads/:filename
+// POST /api/upload/multiple — multi-file upload
+router.post('/multiple', upload.array('files', 20), (req, res) => {
+  const files = req.files as Express.Multer.File[];
+  if (!files || files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
+  res.json(files.map(f => ({
+    filename: f.filename,
+    originalName: f.originalname,
+    size: f.size,
+  })));
+});
+
+// GET /api/uploads/:filename — serve file
 router.get('/:filename', (req, res) => {
   const filePath = path.join(UPLOADS_DIR, req.params.filename);
   if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });

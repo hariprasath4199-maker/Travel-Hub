@@ -3,8 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import {
   Loader2, ArrowLeft, User, Mail, Globe, Calendar, Building2, CreditCard,
   FileText, MessageSquare, ChevronDown, ChevronUp, Send, CheckCircle, XCircle,
-  Clock, MapPin, Euro, RefreshCw, Hash,
+  Clock, MapPin, Euro, RefreshCw, Hash, Tag,
 } from 'lucide-react';
+import { AttachmentList } from '@/src/components/FileUpload';
 import {
   fetchVisaRequest, fetchEmailLog, submitCostProposal, sendCostCentreApproval,
   submitCostCentreDecision, sendVendorRequest, submitVendorDates, shareDatesWithApplicant,
@@ -496,8 +497,10 @@ export default function VisaRequestDetail() {
       <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm">
         <h3 className="text-lg font-bold font-headline mb-4 border-b border-surface-container pb-3">Request Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <InfoItem icon={Tag} label="Reference No." value={request.referenceNumber || request.id} />
           <InfoItem icon={Hash} label="Employee ID" value={request.employeeId || '--'} />
-          <InfoItem icon={User} label="Applicant" value={request.employeeName} />
+          <InfoItem icon={User} label="First Name" value={request.firstName || request.employeeName?.split(' ')[0] || '--'} />
+          <InfoItem icon={User} label="Last Name" value={request.lastName || request.employeeName?.split(' ').slice(1).join(' ') || '--'} />
           <InfoItem icon={Mail} label="Email" value={request.applicantEmail} />
           <InfoItem icon={FileText} label="Visa Type" value={request.employeeRole || '--'} />
           <InfoItem icon={Globe} label="Destination" value={request.destination} />
@@ -529,6 +532,15 @@ export default function VisaRequestDetail() {
           </div>
         )}
       </div>
+
+      {/* Attachments */}
+      <AttachmentList
+        files={[
+          ...(request.attachments || []),
+          ...(request.recommendationLetterFile && !request.attachments?.includes(request.recommendationLetterFile) ? [request.recommendationLetterFile] : []),
+        ]}
+        label="Attachments"
+      />
 
       {/* Step Action Panel */}
       <StepActionPanel request={request} role={role} userName={userName} onActionComplete={load} />

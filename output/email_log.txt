@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "id": "d0f2757f-48e0-4a5f-b50b-b1b1c81ed64e",
+    "requestId": "VISA-5001",
+    "to": "hr@zalaris.com",
+    "subject": "[VISA-5001] New Visa Request - Gopinath Subramani → Sweden",
+    "sentAt": "2026-04-05T12:41:58.139Z",
+    "templateName": "visa-submitted-hr",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "5d161a92-3f19-42e3-b525-16de40478988",
+    "requestId": "VISA-5001",
+    "to": "gopinath@zalaris.com",
+    "subject": "[VISA-5001] Visa Request Submitted - Gopinath Subramani",
+    "sentAt": "2026-04-05T12:41:58.140Z",
+    "templateName": "visa-submitted-ack",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "9d3a5006-b672-4e4d-b26b-5c12b65eaddb",
+    "requestId": "TB-5001",
+    "to": "hr@zalaris.com",
+    "subject": "[TB-5001] New Ticket Booking Request — Marcus Weber → Oslo, Norway",
+    "sentAt": "2026-04-05T12:43:18.775Z",
+    "templateName": "tb-request-submitted",
+    "status": "DEV_LOGGED"
+  }
+]

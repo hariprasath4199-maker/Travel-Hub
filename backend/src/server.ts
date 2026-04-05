@@ -190,6 +190,7 @@ app.post('/api/travelers', (req, res) => {
 
 app.get('/api/master/cost-centres', (_req, res) => { res.json(readJsonFile(path.join(INPUT_DIR, 'cost_centres.txt'))); });
 app.get('/api/master/locations', (_req, res) => { res.json(readJsonFile(path.join(INPUT_DIR, 'locations.txt'))); });
+app.get('/api/master/employees', (_req, res) => { res.json(readJsonFile(path.join(INPUT_DIR, 'employees.txt'))); });
 
 // ==================== AUDIT & STATS ====================
 

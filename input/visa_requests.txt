@@ -1,1 +1,37 @@
-[]
+[
+  {
+    "id": "VISA-5001",
+    "currentStep": 1,
+    "status": "SUBMITTED_TO_HR",
+    "createdAt": "2026-04-05T12:41:58.138Z",
+    "updatedAt": "2026-04-05T12:41:58.138Z",
+    "employeeId": "EMP-1001",
+    "employeeName": "Gopinath Subramani",
+    "employeeRole": "BUSINESS",
+    "employeeAvatar": "https://ui-avatars.com/api/?name=Gopinath%20Subramani&background=255dad&color=fff&size=128",
+    "applicantEmail": "gopinath@zalaris.com",
+    "applicantMobile": "+358 40 1234567",
+    "managerName": "Gopinath Subramani",
+    "managerEmail": "gopinath@zalaris.com",
+    "destination": "Sweden",
+    "travelLocation": "Stockholm, Sweden",
+    "numberOfDays": 14,
+    "costCentre": "CC-OPS-001",
+    "managerComments": "",
+    "referenceNumber": "VS-05001",
+    "attachments": [],
+    "workflowHistory": [
+      {
+        "id": "ef278fd3-9b48-4f7c-a70c-87d0730fa243",
+        "step": 1,
+        "action": "Request submitted to HR Admin",
+        "fromStatus": null,
+        "toStatus": "SUBMITTED_TO_HR",
+        "performedBy": "Gopinath Subramani",
+        "performedByRole": "MANAGER",
+        "timestamp": "2026-04-05T12:41:58.138Z",
+        "comments": ""
+      }
+    ]
+  }
+]

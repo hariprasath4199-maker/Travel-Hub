@@ -8,9 +8,9 @@ import { createVisaRequest } from '@/src/visaApi';
 import { FileUpload } from '@/src/components/FileUpload';
 import { useUserRole } from '@/src/context/UserRoleContext';
 import { CountryCodePicker } from '@/src/components/CountryCodePicker';
-import { fetchCostCentres, fetchLocations, type CostCentre, type Location } from '@/src/masterDataApi';
+import { fetchCostCentres, fetchLocations, fetchEmployees, type CostCentre, type Location, type Employee } from '@/src/masterDataApi';
 
-const VISA_TYPES = ['WORK', 'BUSINESS', 'TOURIST', 'STUDENT', 'TRANSIT'] as const;
+const VISA_TYPES = ['WORK', 'BUSINESS', 'TRANSIT'] as const;
 const URGENCY_LEVELS = ['NORMAL', 'URGENT', 'CRITICAL'] as const;
 
 export default function NewVisaRequest() {
@@ -20,16 +20,18 @@ export default function NewVisaRequest() {
   const [error, setError] = useState<string | null>(null);
   const [costCentres, setCostCentres] = useState<CostCentre[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
-    Promise.all([fetchCostCentres(), fetchLocations()])
-      .then(([cc, loc]) => { setCostCentres(cc); setLocations(loc); })
+    Promise.all([fetchCostCentres(), fetchLocations(), fetchEmployees()])
+      .then(([cc, loc, emp]) => { setCostCentres(cc); setLocations(loc); setEmployees(emp); })
       .catch(() => {});
   }, []);
 
   const [formData, setFormData] = useState({
     employeeId: '',
-    applicantName: '',
+    firstName: '',
+    lastName: '',
     applicantEmail: '',
     applicantMobile: '',
     passportNumber: '',
@@ -43,18 +45,31 @@ export default function NewVisaRequest() {
     costCentre: '',
     managerComments: '',
     recommendationLetterFile: '',
+    attachments: [] as string[],
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => {
       const next = { ...prev, [name]: value };
-      // Auto-fill destination country when location is selected
+      if (name === 'employeeId') {
+        const emp = employees.find(e => e.employeeId === value);
+        if (emp) {
+          next.firstName = emp.firstName;
+          next.lastName = emp.lastName;
+          next.applicantEmail = emp.email;
+          next.applicantMobile = emp.mobile || '';
+          next.costCentre = emp.costCentre || '';
+        } else {
+          next.firstName = '';
+          next.lastName = '';
+          next.applicantEmail = '';
+          next.applicantMobile = '';
+        }
+      }
       if (name === 'locationId') {
         const loc = locations.find(l => l.id === value);
-        if (loc) {
-          next.destinationCountry = loc.country;
-        }
+        if (loc) next.destinationCountry = loc.country;
       }
       return next;
     });
@@ -72,7 +87,9 @@ export default function NewVisaRequest() {
 
       const payload = {
         employeeId: formData.employeeId,
-        employeeName: formData.applicantName,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        employeeName: `${formData.firstName} ${formData.lastName}`.trim(),
         applicantEmail: formData.applicantEmail,
         applicantMobile: formData.applicantMobile || undefined,
         passportNumber: formData.passportNumber,
@@ -89,6 +106,7 @@ export default function NewVisaRequest() {
         managerEmail: currentUser?.email || '',
         managerComments: formData.managerComments,
         recommendationLetterFile: formData.recommendationLetterFile || undefined,
+        attachments: formData.attachments,
         performedBy: currentUser?.name || 'Manager',
         performedByRole: currentUser?.role || 'MANAGER',
       };
@@ -102,6 +120,7 @@ export default function NewVisaRequest() {
   };
 
   const inputCls = 'w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none transition-all';
+  const readOnlyCls = `${inputCls} opacity-70 cursor-not-allowed bg-surface-container`;
   const labelCls = 'text-sm font-bold text-on-surface-variant flex items-center gap-2';
 
   return (
@@ -134,12 +153,16 @@ export default function NewVisaRequest() {
               <input required name="employeeId" value={formData.employeeId} onChange={handleChange} type="text" className={inputCls} />
             </div>
             <div className="space-y-2">
-              <label className={labelCls}><User size={16} /> Full Name *</label>
-              <input required name="applicantName" value={formData.applicantName} onChange={handleChange} type="text" className={inputCls} />
+              <label className={labelCls}><User size={16} /> First Name</label>
+              <input name="firstName" value={formData.firstName} readOnly type="text" className={readOnlyCls} />
             </div>
             <div className="space-y-2">
-              <label className={labelCls}><Mail size={16} /> Email *</label>
-              <input required name="applicantEmail" value={formData.applicantEmail} onChange={handleChange} type="email" className={inputCls} />
+              <label className={labelCls}><User size={16} /> Last Name</label>
+              <input name="lastName" value={formData.lastName} readOnly type="text" className={readOnlyCls} />
+            </div>
+            <div className="space-y-2">
+              <label className={labelCls}><Mail size={16} /> Email</label>
+              <input name="applicantEmail" value={formData.applicantEmail} readOnly type="email" className={readOnlyCls} />
             </div>
             <div className="space-y-2 relative">
               <label className={labelCls}><Phone size={16} /> Mobile Number</label>
@@ -179,10 +202,7 @@ export default function NewVisaRequest() {
             </div>
             <div className="space-y-2">
               <label className={labelCls}><Globe size={16} /> Destination Country</label>
-              <input
-                name="destinationCountry" value={formData.destinationCountry} onChange={handleChange}
-                type="text" readOnly className={`${inputCls} opacity-70 cursor-not-allowed`}
-              />
+              <input name="destinationCountry" value={formData.destinationCountry} readOnly type="text" className={readOnlyCls} />
             </div>
             <div className="space-y-2">
               <label className={labelCls}><AlertTriangle size={16} /> Urgency</label>
@@ -223,14 +243,14 @@ export default function NewVisaRequest() {
             </div>
             <div className="space-y-2">
               <label className={labelCls}><User size={16} /> Submitting Manager</label>
-              <input type="text" readOnly value={currentUser ? `${currentUser.name} (${currentUser.email})` : 'Loading...'} className={`${inputCls} opacity-70 cursor-not-allowed`} />
+              <input type="text" readOnly value={currentUser ? `${currentUser.name} (${currentUser.email})` : 'Loading...'} className={readOnlyCls} />
             </div>
           </div>
           <div className="space-y-2">
             <label className={labelCls}><MessageSquare size={16} /> Manager Comments</label>
             <textarea name="managerComments" value={formData.managerComments} onChange={handleChange} rows={3} placeholder="Optional comments or special instructions..." className={`${inputCls} resize-none`} />
           </div>
-          <FileUpload label="Recommendation Letter" onUploadComplete={(filename) => setFormData((prev) => ({ ...prev, recommendationLetterFile: filename }))} />
+          <FileUpload label="Attachments (Recommendation Letter, Supporting Documents)" onUploadComplete={(filenames) => setFormData((prev) => ({ ...prev, attachments: filenames, recommendationLetterFile: filenames[0] || '' }))} />
         </div>
 
         {/* Actions */}

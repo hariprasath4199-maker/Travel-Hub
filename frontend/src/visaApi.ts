@@ -16,10 +16,10 @@ export interface WorkflowEvent { id: string; step: number; action: string; fromS
 
 export interface VisaRequest {
   id: string; currentStep: number; status: VisaRequestStatus; createdAt: string; updatedAt: string;
-  employeeId: string; employeeName: string; employeeRole: string; employeeAvatar: string;
+  employeeId: string; firstName?: string; lastName?: string; employeeName: string; employeeRole: string; employeeAvatar: string;
   applicantEmail: string; applicantMobile?: string; managerName: string; managerEmail: string;
   destination: string; travelLocation: string; numberOfDays: number;
-  costCentre: string; managerComments: string; recommendationLetterFile?: string;
+  costCentre: string; managerComments: string; referenceNumber?: string; recommendationLetterFile?: string; attachments?: string[];
   costProposal?: CostProposal; costProposalSharedAt?: string;
   costCentreOwnerName?: string; costCentreOwnerEmail?: string; costCentreApprovedAt?: string; costCentreRejectedAt?: string; costCentreRejectionReason?: string;
   vendorName?: string; vendorEmail?: string; vendorRequestedAt?: string;

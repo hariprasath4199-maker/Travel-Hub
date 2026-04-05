@@ -3,19 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, PlaneTakeoff, Building2, Calendar, DollarSign, FileText, User, Briefcase, Phone, Hash, MapPin, Globe } from 'lucide-react';
 import { createRequest } from '@/src/api';
 import { CountryCodePicker } from '@/src/components/CountryCodePicker';
-import { fetchLocations, type Location } from '@/src/masterDataApi';
+import { fetchLocations, fetchEmployees, type Location, type Employee } from '@/src/masterDataApi';
 
 export default function NewRequest() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
-    fetchLocations().then(setLocations).catch(() => {});
+    Promise.all([fetchLocations(), fetchEmployees()])
+      .then(([loc, emp]) => { setLocations(loc); setEmployees(emp); })
+      .catch(() => {});
   }, []);
 
   const [formData, setFormData] = useState({
-    employeeId: '', employeeName: '', role: '', department: '', mobileNumber: '',
+    employeeId: '', firstName: '', lastName: '', role: '', department: '', mobileNumber: '',
     locationId: '', destination: '',
     purpose: '', departureDate: '', returnDate: '', flightCost: '', hotelCost: '', otherCost: '', notes: '',
   });
@@ -24,6 +27,22 @@ export default function NewRequest() {
     const { name, value } = e.target;
     setFormData(prev => {
       const next = { ...prev, [name]: value };
+      if (name === 'employeeId') {
+        const emp = employees.find(e => e.employeeId === value);
+        if (emp) {
+          next.firstName = emp.firstName;
+          next.lastName = emp.lastName;
+          next.role = emp.role;
+          next.department = emp.department;
+          next.mobileNumber = emp.mobile || '';
+        } else {
+          next.firstName = '';
+          next.lastName = '';
+          next.role = '';
+          next.department = '';
+          next.mobileNumber = '';
+        }
+      }
       if (name === 'locationId') {
         const loc = locations.find(l => l.id === value);
         if (loc) next.destination = `${loc.city}, ${loc.country}`;
@@ -47,7 +66,10 @@ export default function NewRequest() {
 
       await createRequest({
         employeeId: formData.employeeId,
-        employeeName: formData.employeeName, role: formData.role, destination: formData.destination,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        employeeName: `${formData.firstName} ${formData.lastName}`.trim(),
+        role: formData.role, destination: formData.destination,
         dates, nights: `${nightsNum} night${nightsNum !== 1 ? 's' : ''}`,
         purpose: formData.purpose, cost: `\u20AC${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
         department: formData.department,
@@ -58,6 +80,7 @@ export default function NewRequest() {
   };
 
   const inputCls = 'w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all';
+  const readOnlyCls = `${inputCls} opacity-70 cursor-not-allowed bg-surface-container`;
   const labelCls = 'text-sm font-bold text-on-surface-variant flex items-center gap-2';
 
   return (
@@ -79,27 +102,22 @@ export default function NewRequest() {
               <input required name="employeeId" value={formData.employeeId} onChange={handleChange} type="text" className={inputCls} />
             </div>
             <div className="space-y-2">
-              <label className={labelCls}><User size={16} /> Full Name *</label>
-              <input required name="employeeName" value={formData.employeeName} onChange={handleChange} type="text" className={inputCls} />
+              <label className={labelCls}><User size={16} /> First Name</label>
+              <input name="firstName" value={formData.firstName} readOnly type="text" className={readOnlyCls} />
             </div>
             <div className="space-y-2">
-              <label className={labelCls}><Briefcase size={16} /> Role *</label>
-              <input required name="role" value={formData.role} onChange={handleChange} type="text" className={inputCls} />
+              <label className={labelCls}><User size={16} /> Last Name</label>
+              <input name="lastName" value={formData.lastName} readOnly type="text" className={readOnlyCls} />
+            </div>
+            <div className="space-y-2">
+              <label className={labelCls}><Briefcase size={16} /> Role</label>
+              <input name="role" value={formData.role} readOnly type="text" className={readOnlyCls} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className={labelCls}><Building2 size={16} /> Department *</label>
-              <select required name="department" value={formData.department} onChange={handleChange} className={`${inputCls} appearance-none`}>
-                <option value="" disabled>Select department...</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Sales & Marketing">Sales & Marketing</option>
-                <option value="Product Design">Product Design</option>
-                <option value="Executive">Executive</option>
-                <option value="Operations">Operations</option>
-                <option value="Finance">Finance</option>
-                <option value="HR">HR</option>
-              </select>
+              <label className={labelCls}><Building2 size={16} /> Department</label>
+              <input name="department" value={formData.department} readOnly type="text" className={readOnlyCls} />
             </div>
             <div className="space-y-2 relative">
               <label className={labelCls}><Phone size={16} /> Mobile Number</label>
@@ -125,7 +143,7 @@ export default function NewRequest() {
             </div>
             <div className="space-y-2">
               <label className={labelCls}><Globe size={16} /> Destination</label>
-              <input name="destination" value={formData.destination} readOnly type="text" className={`${inputCls} opacity-70 cursor-not-allowed`} />
+              <input name="destination" value={formData.destination} readOnly type="text" className={readOnlyCls} />
             </div>
             <div className="space-y-2">
               <label className={labelCls}><PlaneTakeoff size={16} /> Purpose *</label>

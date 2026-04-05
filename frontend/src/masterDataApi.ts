@@ -26,3 +26,21 @@ export const fetchLocations = async (): Promise<Location[]> => {
   if (!res.ok) throw new Error('Failed to fetch locations');
   return res.json();
 };
+
+export interface Employee {
+  employeeId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobile: string;
+  role: string;
+  department: string;
+  costCentre: string;
+  location: string;
+}
+
+export const fetchEmployees = async (): Promise<Employee[]> => {
+  const res = await fetch(`${API}/master/employees`);
+  if (!res.ok) throw new Error('Failed to fetch employees');
+  return res.json();
+};

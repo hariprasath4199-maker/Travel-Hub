@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Loader2, ArrowLeft, User, Mail, Globe, Calendar, Building2, CreditCard,
-  FileText, MessageSquare, Send, CheckCircle, XCircle, AlertTriangle, MapPin, DollarSign,
+  FileText, MessageSquare, Send, CheckCircle, XCircle, AlertTriangle, MapPin, DollarSign, Tag,
 } from 'lucide-react';
+import { AttachmentList } from '@/src/components/FileUpload';
 import {
   fetchTicketBookingById, fetchTicketEmails, requestItinerary, submitItinerary,
   shareItinerary, submitEvpDecision, requestBooking, submitBookedTicket, shareTicket,
@@ -178,12 +179,20 @@ export default function TicketBookingDetail() {
             <h2 className="text-lg font-bold text-on-surface">Request Details</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Reference No.</p>
+                <p className="text-on-surface mt-1 font-mono text-sm">{booking.referenceNumber || booking.id}</p>
+              </div>
+              <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Employee ID</p>
                 <p className="text-on-surface mt-1">{booking.employeeId || '--'}</p>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Applicant</p>
-                <p className="text-on-surface mt-1">{booking.applicantName}</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">First Name</p>
+                <p className="text-on-surface mt-1">{booking.firstName || booking.applicantName?.split(' ')[0] || '--'}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Last Name</p>
+                <p className="text-on-surface mt-1">{booking.lastName || booking.applicantName?.split(' ').slice(1).join(' ') || '--'}</p>
                 <p className="text-sm text-on-surface-variant">{booking.applicantEmail}</p>
               </div>
               <div>
@@ -210,6 +219,7 @@ export default function TicketBookingDetail() {
                 <p className="text-on-surface mt-1">{booking.purpose}</p>
               </div>
             </div>
+            <AttachmentList files={booking.attachments || []} />
           </div>
 
           {/* Step 1: Ticket Request — Info only for Manager/Applicant */}

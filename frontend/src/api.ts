@@ -19,6 +19,8 @@ export async function fetchRequestById(id: string): Promise<TravelRequest | null
 
 export async function createRequest(data: {
   employeeId: string;
+  firstName: string;
+  lastName: string;
   employeeName: string;
   role: string;
   destination: string;

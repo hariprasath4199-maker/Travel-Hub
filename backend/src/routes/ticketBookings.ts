@@ -65,8 +65,10 @@ router.post('/', async (req, res) => {
     : 5001;
 
   const now = new Date().toISOString();
+  const refNum = `TK-${String(nextNum).padStart(5, '0')}`;
   const newBooking = {
     id: `TB-${nextNum}`,
+    referenceNumber: refNum,
     ...req.body,
     status: req.body.status || 'TICKET_REQUESTED',
     currentStep: req.body.currentStep || 1,

@@ -3,6 +3,8 @@ export type RequestStatus = 'PENDING' | 'APPROVED' | 'DENIED';
 export interface TravelRequest {
   id: string;
   employeeId?: string;
+  firstName?: string;
+  lastName?: string;
   employeeName: string;
   role: string;
   avatar: string;

@@ -65,6 +65,8 @@ export interface VisaRequest {
 
   // Step 1: Manager submits
   employeeId: string;
+  firstName?: string;
+  lastName?: string;
   employeeName: string;
   employeeRole: string;
   employeeAvatar: string;
@@ -77,7 +79,9 @@ export interface VisaRequest {
   numberOfDays: number;
   costCentre: string;
   managerComments: string;
+  referenceNumber: string;
   recommendationLetterFile?: string;
+  attachments?: string[];
 
   // Step 2: HR cost proposal
   costProposal?: CostProposal;

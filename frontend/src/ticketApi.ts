@@ -63,6 +63,8 @@ export interface TicketBooking {
   id: string;
   visaRequestId: string;
   employeeId?: string;
+  firstName?: string;
+  lastName?: string;
   applicantName: string;
   applicantEmail: string;
   applicantMobile?: string;
@@ -72,6 +74,8 @@ export interface TicketBooking {
   travelStartDate: string;
   travelEndDate: string;
   purpose: string;
+  referenceNumber?: string;
+  attachments?: string[];
   status: TicketBookingStatus;
   currentStep: number;
   itineraryOptions: ItineraryOption[];

@@ -1,6 +1,8 @@
 [
   {
     "id": "USR-001",
+    "firstName": "Gopinath",
+    "lastName": "Subramani",
     "name": "Gopinath Subramani",
     "email": "gopinath@zalaris.com",
     "role": "MANAGER",
@@ -8,6 +10,8 @@
   },
   {
     "id": "USR-002",
+    "firstName": "Hari",
+    "lastName": "Kumar",
     "name": "Hari Kumar",
     "email": "hari@zalaris.com",
     "role": "HR_ADMIN",
@@ -15,6 +19,8 @@
   },
   {
     "id": "USR-003",
+    "firstName": "Anna",
+    "lastName": "Fischer",
     "name": "Anna Fischer",
     "email": "anna.fischer@zalaris.com",
     "role": "COST_CENTRE_OWNER",
@@ -22,6 +28,8 @@
   },
   {
     "id": "USR-004",
+    "firstName": "VFS",
+    "lastName": "Global",
     "name": "VFS Global",
     "email": "vendor@vfsglobal.com",
     "role": "VENDOR",
@@ -29,6 +37,8 @@
   },
   {
     "id": "USR-005",
+    "firstName": "Ravi",
+    "lastName": "Shankar",
     "name": "Ravi Shankar",
     "email": "ravi@zalaris.com",
     "role": "APPLICANT",
@@ -36,6 +46,8 @@
   },
   {
     "id": "USR-006",
+    "firstName": "Marcus",
+    "lastName": "Weber",
     "name": "Marcus Weber",
     "email": "marcus.weber@zalaris.com",
     "role": "EVP",

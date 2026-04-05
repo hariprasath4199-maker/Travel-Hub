@@ -57,6 +57,7 @@ router.post('/', async (req, res) => {
   const reqs = getRequests();
   const nextNum = reqs.length > 0 ? Math.max(...reqs.map(r => parseInt(r.id.replace('VISA-', '')) || 0)) + 1 : 5001;
   const now = new Date().toISOString();
+  const refNum = `VS-${String(nextNum).padStart(5, '0')}`;
 
   const nr: VisaRequest = {
     id: `VISA-${nextNum}`,
@@ -77,7 +78,9 @@ router.post('/', async (req, res) => {
     numberOfDays: req.body.numberOfDays || 0,
     costCentre: req.body.costCentre || '',
     managerComments: req.body.managerComments || '',
+    referenceNumber: refNum,
     recommendationLetterFile: req.body.recommendationLetterFile || undefined,
+    attachments: req.body.attachments || [],
     workflowHistory: [],
   };
 

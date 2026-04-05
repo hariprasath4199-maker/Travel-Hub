@@ -81,20 +81,49 @@ def import_users(wb, dry_run=False):
         return
     result = []
     for r in raw:
-        name = r.get("Full Name", "")
-        if not name:
+        first = r.get("First Name", "")
+        last = r.get("Last Name", "")
+        if not first:
             continue
+        name = f"{first} {last}".strip()
         avatar = r.get("Avatar URL", "")
         if not avatar:
             avatar = f"https://ui-avatars.com/api/?name={name.replace(' ', '+')}&background=255dad&color=fff&size=128"
         result.append({
             "id": r.get("User ID", ""),
+            "firstName": first,
+            "lastName": last,
             "name": name,
             "email": r.get("Email", ""),
             "role": r.get("Role", "APPLICANT"),
             "avatar": avatar,
         })
     write_json("users.txt", result, dry_run)
+
+
+def import_employees(wb, dry_run=False):
+    """Employees sheet → input/employees.txt"""
+    raw = read_sheet(wb, "Employees")
+    if not raw:
+        print("  Employees: No data found.")
+        return
+    result = []
+    for r in raw:
+        first = r.get("First Name", "")
+        if not first:
+            continue
+        result.append({
+            "employeeId": r.get("Employee ID", ""),
+            "firstName": first,
+            "lastName": r.get("Last Name", ""),
+            "email": r.get("Email", ""),
+            "mobile": r.get("Mobile", ""),
+            "role": r.get("Role / Title", ""),
+            "department": r.get("Department", ""),
+            "costCentre": r.get("Cost Centre ID", ""),
+            "location": r.get("Location ID", ""),
+        })
+    write_json("employees.txt", result, dry_run)
 
 
 def import_cost_centres(wb, dry_run=False):
@@ -144,9 +173,11 @@ def import_travel_requests(wb, dry_run=False):
         return
     result = []
     for i, r in enumerate(raw, 5001):
-        name = r.get("Employee Name", "")
-        if not name:
+        first = r.get("First Name", "")
+        last = r.get("Last Name", "")
+        if not first:
             continue
+        name = f"{first} {last}".strip()
         flight = float(r.get("Flight Cost (EUR)", 0) or 0)
         hotel = float(r.get("Hotel Cost (EUR)", 0) or 0)
         other = float(r.get("Other Cost (EUR)", 0) or 0)
@@ -172,6 +203,8 @@ def import_travel_requests(wb, dry_run=False):
         rec = {
             "id": f"REQ-{i}",
             "employeeId": r.get("Employee ID", ""),
+            "firstName": first,
+            "lastName": last,
             "employeeName": name,
             "role": r.get("Role", ""),
             "destination": r.get("Destination", ""),
@@ -199,9 +232,11 @@ def import_visa_requests(wb, dry_run=False):
     now = datetime.utcnow().isoformat() + "Z"
     result = []
     for i, r in enumerate(raw, 5001):
-        name = r.get("Full Name", "")
-        if not name:
+        first = r.get("First Name", "")
+        last = r.get("Last Name", "")
+        if not first:
             continue
+        name = f"{first} {last}".strip()
 
         dep = r.get("Travel Date From", "")
         to = r.get("Travel Date To", "")
@@ -219,6 +254,8 @@ def import_visa_requests(wb, dry_run=False):
             "currentStep": 1,
             "status": "SUBMITTED",
             "employeeId": r.get("Employee ID", ""),
+            "firstName": first,
+            "lastName": last,
             "employeeName": name,
             "applicantEmail": r.get("Email", ""),
             "applicantMobile": r.get("Mobile Number", "") or None,
@@ -264,13 +301,17 @@ def import_ticket_bookings(wb, dry_run=False):
     now = datetime.utcnow().isoformat() + "Z"
     result = []
     for i, r in enumerate(raw, 5001):
-        name = r.get("Applicant Name", "")
-        if not name:
+        first = r.get("First Name", "")
+        last = r.get("Last Name", "")
+        if not first:
             continue
+        name = f"{first} {last}".strip()
         rec = {
             "id": f"TB-{i}",
             "visaRequestId": r.get("Visa Request ID", "") or "",
             "employeeId": r.get("Employee ID", ""),
+            "firstName": first,
+            "lastName": last,
             "applicantName": name,
             "applicantEmail": r.get("Applicant Email", ""),
             "applicantMobile": r.get("Mobile Number", "") or None,
@@ -337,6 +378,7 @@ def main():
 
     sheet_map = {
         "Users": import_users,
+        "Employees": import_employees,
         "Cost Centres": import_cost_centres,
         "Locations": import_locations,
         "Travel Requests": import_travel_requests,
