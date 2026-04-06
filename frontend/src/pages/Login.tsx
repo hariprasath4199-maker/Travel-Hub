@@ -22,13 +22,24 @@ const ROLE_LABELS: Record<UserRole, string> = {
   VENDOR: 'Vendor Partner',
 };
 
+// Hardcoded users for GitHub Pages (no backend needed) — remove later
+const HARDCODED_USERS: AppUser[] = [
+  { id: 'USR-001', name: 'Hariprasath Ramakrishnan', email: 'Hariprasath@zalaris.com', role: 'ADMIN', avatar: 'https://ui-avatars.com/api/?name=Hariprasath+Ramakrishnan&background=dc2626&color=fff&size=128' },
+  { id: 'USR-002', name: 'Ravi Shankar', email: 'ravi@zalaris.com', role: 'EMPLOYEE', avatar: 'https://ui-avatars.com/api/?name=Ravi+Shankar&background=0ea5e9&color=fff&size=128' },
+  { id: 'USR-003', name: 'Anna Fischer', email: 'anna.fischer@zalaris.com', role: 'MANAGER', avatar: 'https://ui-avatars.com/api/?name=Anna+Fischer&background=7c3aed&color=fff&size=128' },
+  { id: 'USR-004', name: 'Hari Kumar', email: 'hari@zalaris.com', role: 'HRBP', avatar: 'https://ui-avatars.com/api/?name=Hari+Kumar&background=059669&color=fff&size=128' },
+  { id: 'USR-005', name: 'Marcus Weber', email: 'marcus.weber@zalaris.com', role: 'EXECUTIVE', avatar: 'https://ui-avatars.com/api/?name=Marcus+Weber&background=6366f1&color=fff&size=128' },
+  { id: 'USR-006', name: 'Erik Lindqvist', email: 'erik.lindqvist@zalaris.com', role: 'FINANCE', avatar: 'https://ui-avatars.com/api/?name=Erik+Lindqvist&background=d97706&color=fff&size=128' },
+  { id: 'USR-007', name: 'VFS Global', email: 'vendor@vfsglobal.com', role: 'VENDOR', avatar: 'https://ui-avatars.com/api/?name=VFS+Global&background=ec4899&color=fff&size=128' },
+];
+
 interface LoginProps {
   onLogin: (user: AppUser) => void;
 }
 
 export default function Login({ onLogin }: LoginProps) {
-  const [users, setUsers] = useState<AppUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<AppUser[]>(HARDCODED_USERS);
+  const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AppUser | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,11 +49,11 @@ export default function Login({ onLogin }: LoginProps) {
   const [error, setError] = useState('');
   const [lampOn, setLampOn] = useState(false);
 
+  // Try to fetch from API, fall back to hardcoded
   useEffect(() => {
     fetchUsers().then(u => {
-      setUsers(u);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+      if (u && u.length > 0) setUsers(u);
+    }).catch(() => {});
   }, []);
 
   function selectUser(user: AppUser) {
