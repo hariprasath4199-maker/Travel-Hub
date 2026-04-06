@@ -1,39 +1,39 @@
 [
   {
-    "employeeId": "EMP-1001",
+    "employeeId": "400001",
     "firstName": "Gopinath",
     "lastName": "Subramani",
     "email": "gopinath@zalaris.com",
-    "mobile": "+358 40 1234567",
-    "role": "Senior Manager",
+    "mobile": "+91 1234567890",
+    "role": "Head of Operations",
     "department": "Operations",
     "costCentre": "CC-OPS-001",
-    "location": "LOC-001"
+    "location": "Chennai"
   },
   {
-    "employeeId": "EMP-1002",
-    "firstName": "Hari",
-    "lastName": "Kumar",
+    "employeeId": "400002",
+    "firstName": "Hariprasath",
+    "lastName": "Ramakrishnan",
     "email": "hari@zalaris.com",
-    "mobile": "+358 50 2345678",
+    "mobile": "+91 123456790",
     "role": "HR Administrator",
     "department": "HR",
     "costCentre": "CC-HR-001",
-    "location": "LOC-001"
+    "location": "Chennai"
   },
   {
-    "employeeId": "EMP-1003",
+    "employeeId": "400003",
     "firstName": "Anna",
     "lastName": "Fischer",
-    "email": "anna.fischer@zalaris.com",
+    "email": "anna@zalaris.com",
     "mobile": "+49 170 9876543",
     "role": "Finance Lead",
     "department": "Finance",
     "costCentre": "CC-FIN-001",
-    "location": "LOC-005"
+    "location": "Helsinki"
   },
   {
-    "employeeId": "EMP-1004",
+    "employeeId": "400004",
     "firstName": "Ravi",
     "lastName": "Shankar",
     "email": "ravi@zalaris.com",
@@ -41,182 +41,73 @@
     "role": "Senior Developer",
     "department": "Engineering",
     "costCentre": "CC-DEV-001",
-    "location": "LOC-015"
+    "location": "Pune"
   },
   {
-    "employeeId": "EMP-1005",
+    "employeeId": "400005",
     "firstName": "Marcus",
     "lastName": "Weber",
-    "email": "marcus.weber@zalaris.com",
+    "email": "marcus@zalaris.com",
     "mobile": "+49 151 5678901",
     "role": "VP Engineering",
     "department": "Executive",
     "costCentre": "CC-EXE-001",
-    "location": "LOC-006"
+    "location": "Riga"
   },
   {
-    "employeeId": "EMP-1006",
+    "employeeId": "400006",
     "firstName": "Priya",
     "lastName": "Sharma",
-    "email": "priya.sharma@zalaris.com",
+    "email": "priya@zalaris.com",
     "mobile": "+91 87654 32109",
     "role": "QA Engineer",
     "department": "Engineering",
     "costCentre": "CC-DEV-002",
-    "location": "LOC-016"
+    "location": "Bangalore"
   },
   {
-    "employeeId": "EMP-1007",
+    "employeeId": "400007",
     "firstName": "Erik",
     "lastName": "Lindqvist",
-    "email": "erik.lindqvist@zalaris.com",
+    "email": "erik@zalaris.com",
     "mobile": "+46 70 1234567",
     "role": "Solutions Architect",
     "department": "Engineering",
     "costCentre": "CC-DEV-001",
-    "location": "LOC-003"
+    "location": "Walldorf"
   },
   {
-    "employeeId": "EMP-1008",
+    "employeeId": "400008",
     "firstName": "Sofia",
     "lastName": "Andersen",
-    "email": "sofia.andersen@zalaris.com",
+    "email": "sofia@zalaris.com",
     "mobile": "+47 90 123456",
     "role": "Product Manager",
     "department": "Product Design",
     "costCentre": "CC-PRD-001",
-    "location": "LOC-002"
+    "location": "Nottoden"
   },
   {
-    "employeeId": "EMP-1009",
+    "employeeId": "400009",
     "firstName": "Klaus",
     "lastName": "Müller",
-    "email": "klaus.mueller@zalaris.com",
+    "email": "klaus@zalaris.com",
     "mobile": "+49 160 7654321",
     "role": "Finance Analyst",
     "department": "Finance",
     "costCentre": "CC-FIN-002",
-    "location": "LOC-005"
+    "location": "Oslo"
   },
   {
-    "employeeId": "EMP-1010",
+    "employeeId": "400010",
     "firstName": "Laura",
     "lastName": "Virtanen",
-    "email": "laura.virtanen@zalaris.com",
+    "email": "laura@zalaris.com",
     "mobile": "+358 45 6789012",
     "role": "HR Specialist",
     "department": "HR",
     "costCentre": "CC-HR-001",
-    "location": "LOC-001"
-  },
-  {
-    "employeeId": "EMP-1011",
-    "firstName": "Arjun",
-    "lastName": "Patel",
-    "email": "arjun.patel@zalaris.com",
-    "mobile": "+91 99876 54321",
-    "role": "DevOps Engineer",
-    "department": "Engineering",
-    "costCentre": "CC-DEV-001",
-    "location": "LOC-015"
-  },
-  {
-    "employeeId": "EMP-1012",
-    "firstName": "Mette",
-    "lastName": "Jensen",
-    "email": "mette.jensen@zalaris.com",
-    "mobile": "+45 20 345678",
-    "role": "Sales Manager",
-    "department": "Sales & Marketing",
-    "costCentre": "CC-SAL-001",
-    "location": "LOC-004"
-  },
-  {
-    "employeeId": "EMP-1013",
-    "firstName": "James",
-    "lastName": "Richardson",
-    "email": "james.richardson@zalaris.com",
-    "mobile": "+44 7700 900123",
-    "role": "Business Analyst",
-    "department": "Operations",
-    "costCentre": "CC-OPS-001",
-    "location": "LOC-009"
-  },
-  {
-    "employeeId": "EMP-1014",
-    "firstName": "Katrina",
-    "lastName": "Ozola",
-    "email": "katrina.ozola@zalaris.com",
-    "mobile": "+371 2612 3456",
-    "role": "Operations Lead",
-    "department": "Operations",
-    "costCentre": "CC-OPS-002",
-    "location": "LOC-007"
-  },
-  {
-    "employeeId": "EMP-1015",
-    "firstName": "Chen",
-    "lastName": "Wei",
-    "email": "chen.wei@zalaris.com",
-    "mobile": "+65 9123 4567",
-    "role": "Regional Director",
-    "department": "Executive",
-    "costCentre": "CC-EXE-001",
-    "location": "LOC-019"
-  },
-  {
-    "employeeId": "EMP-1016",
-    "firstName": "Fatima",
-    "lastName": "Al-Hassan",
-    "email": "fatima.alhassan@zalaris.com",
-    "mobile": "+971 50 123 4567",
-    "role": "Client Relations Manager",
-    "department": "Sales & Marketing",
-    "costCentre": "CC-SAL-001",
-    "location": "LOC-017"
-  },
-  {
-    "employeeId": "EMP-1017",
-    "firstName": "Pieter",
-    "lastName": "van Dijk",
-    "email": "pieter.vandijk@zalaris.com",
-    "mobile": "+31 6 12345678",
-    "role": "Data Engineer",
-    "department": "Engineering",
-    "costCentre": "CC-DEV-001",
-    "location": "LOC-010"
-  },
-  {
-    "employeeId": "EMP-1018",
-    "firstName": "Marie",
-    "lastName": "Dupont",
-    "email": "marie.dupont@zalaris.com",
-    "mobile": "+33 6 12 34 56 78",
-    "role": "UX Designer",
-    "department": "Product Design",
-    "costCentre": "CC-PRD-001",
-    "location": "LOC-011"
-  },
-  {
-    "employeeId": "EMP-1019",
-    "firstName": "Tomasz",
-    "lastName": "Kowalski",
-    "email": "tomasz.kowalski@zalaris.com",
-    "mobile": "+48 501 234 567",
-    "role": "Systems Administrator",
-    "department": "Engineering",
-    "costCentre": "CC-DEV-001",
-    "location": "LOC-013"
-  },
-  {
-    "employeeId": "EMP-1020",
-    "firstName": "Sarah",
-    "lastName": "Mitchell",
-    "email": "sarah.mitchell@zalaris.com",
-    "mobile": "+1 212 555 0147",
-    "role": "Compliance Officer",
-    "department": "Finance",
-    "costCentre": "CC-FIN-002",
-    "location": "LOC-018"
+    "location": "Denmark"
   }
 ]
+ 

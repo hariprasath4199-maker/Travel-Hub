@@ -33,5 +33,119 @@
         "comments": ""
       }
     ]
+  },
+  {
+    "id": "VISA-5002",
+    "currentStep": 3,
+    "status": "COST_CENTRE_APPROVED",
+    "createdAt": "2026-04-05T13:15:28.309Z",
+    "updatedAt": "2026-04-05T13:18:23.250Z",
+    "employeeId": "400001",
+    "employeeName": "Gopinath Subramani",
+    "employeeRole": "BUSINESS",
+    "employeeAvatar": "https://ui-avatars.com/api/?name=Gopinath%20Subramani&background=255dad&color=fff&size=128",
+    "applicantEmail": "gopinath@zalaris.com",
+    "applicantMobile": "+91 1234567890",
+    "managerName": "Ravi Shankar",
+    "managerEmail": "ravi@zalaris.com",
+    "destination": "Norway",
+    "travelLocation": "Oslo, Norway",
+    "numberOfDays": 46,
+    "costCentre": "CC-OPS-001",
+    "managerComments": "",
+    "referenceNumber": "VS-05002",
+    "attachments": [],
+    "workflowHistory": [
+      {
+        "id": "afd22743-9505-482c-8eec-578fc0094df7",
+        "step": 1,
+        "action": "Request submitted to HR Admin",
+        "fromStatus": null,
+        "toStatus": "SUBMITTED_TO_HR",
+        "performedBy": "Ravi Shankar",
+        "performedByRole": "MANAGER",
+        "timestamp": "2026-04-05T13:15:28.309Z",
+        "comments": ""
+      },
+      {
+        "id": "f8a53c3b-b2f2-4000-8674-158f55c1f682",
+        "step": 2,
+        "action": "Cost proposal shared with Manager",
+        "fromStatus": "SUBMITTED_TO_HR",
+        "toStatus": "COST_PROPOSAL_SHARED",
+        "performedBy": "Hari Kumar",
+        "performedByRole": "HR_ADMIN",
+        "timestamp": "2026-04-05T13:16:20.988Z"
+      },
+      {
+        "id": "78144256-1f03-4394-877f-71972362bdfe",
+        "step": 3,
+        "action": "Sent for cost centre approval",
+        "fromStatus": "COST_PROPOSAL_SHARED",
+        "toStatus": "PENDING_COST_CENTRE_APPROVAL",
+        "performedBy": "Hari Kumar",
+        "performedByRole": "HR_ADMIN",
+        "timestamp": "2026-04-05T13:18:12.074Z"
+      },
+      {
+        "id": "0663c140-8451-4957-9a15-ab7c35952c3e",
+        "step": 3,
+        "action": "Cost centre approved",
+        "fromStatus": "PENDING_COST_CENTRE_APPROVAL",
+        "toStatus": "COST_CENTRE_APPROVED",
+        "performedBy": "Bala",
+        "performedByRole": "COST_CENTRE_OWNER",
+        "timestamp": "2026-04-05T13:18:23.249Z"
+      }
+    ],
+    "costProposal": {
+      "visaFees": 600,
+      "serviceFees": 200,
+      "travelCost": 4000,
+      "accommodationCost": 2000,
+      "otherCosts": 100,
+      "totalCost": 6900,
+      "currency": "EUR"
+    },
+    "costProposalSharedAt": "2026-04-05T13:16:20.988Z",
+    "costCentreOwnerName": "Bala",
+    "costCentreOwnerEmail": "Bala@zalaris.com",
+    "costCentreApprovalToken": "02f0a6d8-74e0-42ae-9bb8-8c7f10c2e7b6",
+    "costCentreApprovedAt": "2026-04-05T13:18:23.249Z"
+  },
+  {
+    "id": "VISA-5003",
+    "currentStep": 1,
+    "status": "SUBMITTED_TO_HR",
+    "createdAt": "2026-04-05T13:47:11.030Z",
+    "updatedAt": "2026-04-05T13:47:11.030Z",
+    "employeeId": "400001",
+    "employeeName": "Gopinath Subramani",
+    "employeeRole": "WORK",
+    "employeeAvatar": "https://ui-avatars.com/api/?name=Gopinath%20Subramani&background=255dad&color=fff&size=128",
+    "applicantEmail": "gopinath@zalaris.com",
+    "applicantMobile": "+91 1234567890",
+    "managerName": "Gopinath Subramani",
+    "managerEmail": "gopinath@zalaris.com",
+    "destination": "Norway",
+    "travelLocation": "Oslo, Norway",
+    "numberOfDays": 2,
+    "costCentre": "CC-OPS-001",
+    "managerComments": "",
+    "referenceNumber": "VS-05003",
+    "attachments": [],
+    "workflowHistory": [
+      {
+        "id": "787deb40-1aec-4455-836a-b107a0b63e1e",
+        "step": 1,
+        "action": "Request submitted to HR Admin",
+        "fromStatus": null,
+        "toStatus": "SUBMITTED_TO_HR",
+        "performedBy": "Gopinath Subramani",
+        "performedByRole": "MANAGER",
+        "timestamp": "2026-04-05T13:47:11.030Z",
+        "comments": ""
+      }
+    ]
   }
 ]

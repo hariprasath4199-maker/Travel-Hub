@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Layout } from './components/Layout';
+import { UserRoleProvider, useUserRole } from './context/UserRoleContext';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Requests from './pages/Requests';
 import Travelers from './pages/Travelers';
@@ -14,32 +16,55 @@ import TicketBookingDetail from './pages/TicketBookingDetail';
 import ActionPage from './pages/ActionPage';
 import RoleSwitcher from './pages/RoleSwitcher';
 import Admin from './pages/Admin';
+import { Loader2 } from 'lucide-react';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
+function AuthGate() {
+  const { isAuthenticated, login, loading } = useUserRole();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0f' }}>
+        <Loader2 size={32} className="animate-spin" style={{ color: '#fbbf24' }} />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Login onLogin={login} />;
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="visa-requests" element={<VisaWorkflow />} />
+        <Route path="visa-requests/new" element={<NewVisaRequest />} />
+        <Route path="visa-requests/:id" element={<VisaRequestDetail />} />
+        <Route path="ticket-bookings" element={<TicketBookings />} />
+        <Route path="ticket-bookings/new" element={<NewTicketBooking />} />
+        <Route path="ticket-bookings/:id" element={<TicketBookingDetail />} />
+        <Route path="action/:token" element={<ActionPage />} />
+        <Route path="requests" element={<Requests />} />
+        <Route path="requests/new" element={<NewRequest />} />
+        <Route path="requests/:id" element={<RequestDetail />} />
+        <Route path="travelers" element={<Travelers />} />
+        <Route path="reports" element={<PlaceholderPage title="Reports" />} />
+        <Route path="admin" element={<Admin />} />
+        <Route path="settings" element={<RoleSwitcher />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
+  );
+}
 
 export default function App() {
   return (
     <BrowserRouter basename={basename}>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="visa-requests" element={<VisaWorkflow />} />
-          <Route path="visa-requests/new" element={<NewVisaRequest />} />
-          <Route path="visa-requests/:id" element={<VisaRequestDetail />} />
-          <Route path="ticket-bookings" element={<TicketBookings />} />
-          <Route path="ticket-bookings/new" element={<NewTicketBooking />} />
-          <Route path="ticket-bookings/:id" element={<TicketBookingDetail />} />
-          <Route path="action/:token" element={<ActionPage />} />
-          <Route path="requests" element={<Requests />} />
-          <Route path="requests/new" element={<NewRequest />} />
-          <Route path="requests/:id" element={<RequestDetail />} />
-          <Route path="travelers" element={<Travelers />} />
-          <Route path="reports" element={<PlaceholderPage title="Reports" />} />
-          <Route path="admin" element={<Admin />} />
-          <Route path="settings" element={<RoleSwitcher />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
+      <UserRoleProvider>
+        <AuthGate />
+      </UserRoleProvider>
     </BrowserRouter>
   );
 }

@@ -25,5 +25,68 @@
     "sentAt": "2026-04-05T12:43:18.775Z",
     "templateName": "tb-request-submitted",
     "status": "DEV_LOGGED"
+  },
+  {
+    "id": "48a1693a-2242-4ca3-82f7-8c288a0e95d9",
+    "requestId": "VISA-5002",
+    "to": "hr@zalaris.com",
+    "subject": "[VISA-5002] New Visa Request - Gopinath Subramani → Norway",
+    "sentAt": "2026-04-05T13:15:28.310Z",
+    "templateName": "visa-submitted-hr",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "5d731e96-3ca9-4831-9695-9ae387b6f2a7",
+    "requestId": "VISA-5002",
+    "to": "ravi@zalaris.com",
+    "subject": "[VISA-5002] Visa Request Submitted - Gopinath Subramani",
+    "sentAt": "2026-04-05T13:15:28.311Z",
+    "templateName": "visa-submitted-ack",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "3392d6d0-72ba-4a88-8b78-6ac4a72101bf",
+    "requestId": "VISA-5002",
+    "to": "ravi@zalaris.com",
+    "subject": "[VISA-5002] Cost Proposal Ready - Gopinath Subramani Visa",
+    "sentAt": "2026-04-05T13:16:20.989Z",
+    "templateName": "cost-proposal-to-manager",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "babada82-7e19-4ed7-aeeb-d4a7da664875",
+    "requestId": "VISA-5002",
+    "to": "Bala@zalaris.com",
+    "subject": "[VISA-5002] Budget Approval Required - €6900.00",
+    "sentAt": "2026-04-05T13:18:12.075Z",
+    "templateName": "cost-centre-approval-request",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "4e4c3ea9-e614-4a65-a785-8b5a28117979",
+    "requestId": "VISA-5002",
+    "to": "ravi@zalaris.com",
+    "subject": "[VISA-5002] Cost Centre Approved - Gopinath Subramani Visa",
+    "sentAt": "2026-04-05T13:18:23.250Z",
+    "templateName": "cost-centre-approved",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "683a7165-6dc7-4cc9-880e-4ac318901827",
+    "requestId": "VISA-5003",
+    "to": "hr@zalaris.com",
+    "subject": "[VISA-5003] New Visa Request - Gopinath Subramani → Norway",
+    "sentAt": "2026-04-05T13:47:11.031Z",
+    "templateName": "visa-submitted-hr",
+    "status": "DEV_LOGGED"
+  },
+  {
+    "id": "4952e9b2-ed2c-4788-ba3b-20c56ad347e1",
+    "requestId": "VISA-5003",
+    "to": "gopinath@zalaris.com",
+    "subject": "[VISA-5003] Visa Request Submitted - Gopinath Subramani",
+    "sentAt": "2026-04-05T13:47:11.031Z",
+    "templateName": "visa-submitted-ack",
+    "status": "DEV_LOGGED"
   }
 ]

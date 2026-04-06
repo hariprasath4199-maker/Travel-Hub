@@ -1,4 +1,4 @@
-import { Bell, HelpCircle, ChevronDown, Menu } from 'lucide-react';
+import { Bell, HelpCircle, ChevronDown, Menu, LogOut } from 'lucide-react';
 import { useUserRole } from '@/src/context/UserRoleContext';
 import { ROLE_LABELS, type UserRole } from '@/src/visaApi';
 
@@ -12,7 +12,7 @@ const ROLE_SHORT: Record<string, string> = {
 };
 
 export function TopBar({ onMenuClick }: TopBarProps) {
-  const { currentUser, allUsers, switchRole } = useUserRole();
+  const { currentUser, allUsers, switchRole, logout } = useUserRole();
 
   return (
     <header className="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 bg-white flex justify-between items-center px-4 md:px-8 z-40 border-b border-surface-container">
@@ -54,6 +54,9 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             <span className="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
           </button>
           <button className="text-slate-500 hover:text-primary transition-all"><HelpCircle size={20} /></button>
+          <button onClick={logout} className="text-slate-500 hover:text-red-500 transition-all" title="Sign Out">
+            <LogOut size={20} />
+          </button>
         </div>
 
         <div className="flex items-center gap-3">

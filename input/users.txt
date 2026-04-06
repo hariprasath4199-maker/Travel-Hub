@@ -1,10 +1,10 @@
 [
   {
     "id": "USR-001",
-    "firstName": "Gopinath",
-    "lastName": "Subramani",
-    "name": "Gopinath Subramani",
-    "email": "gopinath@zalaris.com",
+    "firstName": "Hariprasath",
+    "lastName": "Ramakrishnan",
+    "name": "Hariprasath Ramakrishnan",
+    "email": "Hariprasath@zalaris.com",
     "role": "ADMIN",
     "avatar": "https://ui-avatars.com/api/?name=Gopinath+Subramani&background=dc2626&color=fff&size=128"
   },

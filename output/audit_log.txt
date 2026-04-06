@@ -10,5 +10,23 @@
     "requestId": "TB-5001",
     "timestamp": "2026-04-05T12:43:18.775Z",
     "details": "Ticket booking for Marcus Weber to Oslo, Norway"
+  },
+  {
+    "action": "VISA_REQUEST_CREATED",
+    "requestId": "VISA-5002",
+    "timestamp": "2026-04-05T13:15:28.310Z",
+    "details": "Visa request by Gopinath Subramani to Norway"
+  },
+  {
+    "action": "COST_PROPOSAL_SHARED",
+    "requestId": "VISA-5002",
+    "timestamp": "2026-04-05T13:16:20.988Z",
+    "details": "Cost proposal €6900.00 shared"
+  },
+  {
+    "action": "VISA_REQUEST_CREATED",
+    "requestId": "VISA-5003",
+    "timestamp": "2026-04-05T13:47:11.030Z",
+    "details": "Visa request by Gopinath Subramani to Norway"
   }
 ]
